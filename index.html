@@ -1,0 +1,1866 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>MemoryWall — Your College, Forever</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+/* ╔══════════════════════════════════════╗
+   ║  DESIGN TOKENS                       ║
+   ╚══════════════════════════════════════╝ */
+:root {
+  --bg:       #f0f2ff;
+  --bg2:      #ffffff;
+  --bg3:      #eef0fb;
+  --border:   #e2e5f8;
+
+  --ink:      #12152e;
+  --ink2:     #4a4f7a;
+  --ink3:     #9399c1;
+
+  --violet:   #7c3aed;
+  --violet2:  #9b59f7;
+  --pink:     #f0237d;
+  --coral:    #ff5c5c;
+  --amber:    #ffa500;
+  --lime:     #22d07a;
+  --sky:      #0ea5e9;
+  --indigo:   #4f46e5;
+
+  --grad-a: linear-gradient(135deg, #7c3aed, #f0237d);
+  --grad-b: linear-gradient(135deg, #0ea5e9, #22d07a);
+  --grad-c: linear-gradient(135deg, #ffa500, #ff5c5c);
+  --grad-d: linear-gradient(135deg, #4f46e5, #7c3aed);
+
+  --sidebar-w: 248px;
+  --radius: 14px;
+  --fh: 'Nunito', sans-serif;
+  --fb: 'Space Grotesk', sans-serif;
+
+  --shadow: 0 4px 24px rgba(124,58,237,.12);
+  --shadow2: 0 2px 8px rgba(18,21,46,.08);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--fb);
+  font-size: 15px;
+  line-height: 1.6;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ╔══════════════════════════════════════╗
+   ║  APP SHELL                           ║
+   ╚══════════════════════════════════════╝ */
+.app { display: flex; min-height: 100vh; }
+
+/* ╔══════════════════════════════════════╗
+   ║  SIDEBAR                             ║
+   ╚══════════════════════════════════════╝ */
+.sidebar {
+  width: var(--sidebar-w);
+  background: var(--bg2);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  z-index: 200;
+  transition: transform .3s cubic-bezier(.4,0,.2,1);
+}
+
+.sidebar-logo {
+  padding: 22px 20px 18px;
+  border-bottom: 1px solid var(--border);
+}
+.logo-text {
+  font-family: var(--fh);
+  font-weight: 900;
+  font-size: 22px;
+  letter-spacing: -0.5px;
+  background: var(--grad-a);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.logo-sub {
+  font-size: 11px;
+  color: var(--ink3);
+  font-weight: 500;
+  letter-spacing: .5px;
+  margin-top: 1px;
+}
+
+.sidebar-nav {
+  flex: 1;
+  padding: 14px 12px;
+  overflow-y: auto;
+}
+
+.nav-section {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--ink3);
+  padding: 12px 10px 6px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  cursor: pointer;
+  color: var(--ink2);
+  font-size: 14px;
+  font-weight: 600;
+  transition: background .15s, color .15s;
+  margin-bottom: 2px;
+  user-select: none;
+  position: relative;
+}
+.nav-item:hover { background: var(--bg3); color: var(--ink); }
+.nav-item.active {
+  background: linear-gradient(135deg, rgba(124,58,237,.12), rgba(240,35,125,.08));
+  color: var(--violet);
+}
+.nav-item.active::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 20%; bottom: 20%;
+  width: 3px;
+  background: var(--grad-a);
+  border-radius: 4px;
+}
+.nav-icon {
+  width: 32px; height: 32px;
+  border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+  flex-shrink: 0;
+  background: var(--bg3);
+  transition: all .15s;
+}
+.nav-item.active .nav-icon {
+  background: var(--grad-a);
+}
+.nav-badge {
+  margin-left: auto;
+  background: var(--pink);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 1px 7px;
+  border-radius: 20px;
+  font-family: var(--fh);
+}
+
+.sidebar-user {
+  margin: 12px;
+  padding: 12px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgba(124,58,237,.07), rgba(240,35,125,.05));
+  border: 1px solid rgba(124,58,237,.12);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: box-shadow .15s;
+}
+.sidebar-user:hover { box-shadow: var(--shadow); }
+.su-avatar {
+  width: 38px; height: 38px;
+  border-radius: 12px;
+  background: var(--grad-a);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--fh);
+  font-weight: 800;
+  font-size: 14px;
+  color: #fff;
+  flex-shrink: 0;
+}
+.su-name { font-size: 13px; font-weight: 700; color: var(--ink); }
+.su-role { font-size: 11px; color: var(--ink3); }
+.su-more { margin-left: auto; color: var(--ink3); font-size: 18px; }
+
+/* ╔══════════════════════════════════════╗
+   ║  MAIN                                ║
+   ╚══════════════════════════════════════╝ */
+.main {
+  margin-left: var(--sidebar-w);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* TOPBAR */
+.topbar {
+  position: sticky; top: 0;
+  background: rgba(240,242,255,.88);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 28px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 100;
+}
+.topbar-left { display: flex; align-items: center; gap: 14px; }
+.topbar-title {
+  font-family: var(--fh);
+  font-weight: 800;
+  font-size: 20px;
+  color: var(--ink);
+}
+.menu-toggle {
+  display: none;
+  background: none; border: none;
+  color: var(--ink2); font-size: 22px; cursor: pointer;
+}
+.topbar-right { display: flex; align-items: center; gap: 10px; }
+
+/* BUTTONS */
+.btn {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 9px 18px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  font-family: var(--fh);
+  font-size: 13px;
+  font-weight: 700;
+  transition: all .15s;
+}
+.btn-grad {
+  background: var(--grad-a);
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(124,58,237,.35);
+}
+.btn-grad:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(124,58,237,.4); }
+.btn-outline {
+  background: transparent;
+  color: var(--ink2);
+  border: 1.5px solid var(--border);
+}
+.btn-outline:hover { background: var(--bg3); color: var(--ink); }
+
+/* PAGES */
+.page { display: none; flex: 1; flex-direction: column; min-height: calc(100vh - 60px); }
+.page.active { display: flex; }
+
+/* ╔══════════════════════════════════════╗
+   ║  HOME PAGE                           ║
+   ╚══════════════════════════════════════╝ */
+.hero {
+  padding: 40px 32px 0;
+  position: relative;
+  overflow: hidden;
+}
+/* Colorful blob bg */
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -80px; right: -100px;
+  width: 500px; height: 500px;
+  background: radial-gradient(circle at 60% 40%, rgba(124,58,237,.14) 0%, rgba(240,35,125,.08) 50%, transparent 70%);
+  pointer-events: none;
+}
+.hero::after {
+  content: '';
+  position: absolute;
+  bottom: -60px; left: -60px;
+  width: 300px; height: 300px;
+  background: radial-gradient(circle, rgba(14,165,233,.1) 0%, transparent 70%);
+  pointer-events: none;
+}
+.greeting-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: var(--bg2);
+  border: 1.5px solid var(--border);
+  border-radius: 30px;
+  padding: 5px 14px 5px 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink2);
+  margin-bottom: 20px;
+  box-shadow: var(--shadow2);
+}
+.greeting-pill .pill-dot {
+  width: 24px; height: 24px;
+  border-radius: 8px;
+  background: var(--grad-a);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px;
+}
+.hero h1 {
+  font-family: var(--fh);
+  font-size: clamp(34px, 4.5vw, 58px);
+  font-weight: 900;
+  line-height: 1.08;
+  letter-spacing: -1.5px;
+  color: var(--ink);
+  margin-bottom: 16px;
+  position: relative;
+}
+.hero h1 .grad-word {
+  background: var(--grad-a);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.hero h1 .grad-word2 {
+  background: var(--grad-c);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.hero-sub {
+  font-size: 16px;
+  color: var(--ink2);
+  max-width: 480px;
+  margin-bottom: 28px;
+  font-weight: 400;
+}
+.hero-cta { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 36px; }
+
+/* STATS STRIP */
+.stats-strip {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  padding: 0 32px 32px;
+}
+.stat-tile {
+  background: var(--bg2);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  position: relative;
+  overflow: hidden;
+  transition: transform .2s, box-shadow .2s;
+}
+.stat-tile:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+.stat-tile .st-glow {
+  position: absolute;
+  top: -20px; right: -20px;
+  width: 90px; height: 90px;
+  border-radius: 50%;
+  opacity: .25;
+}
+.st1 .st-glow { background: var(--violet); }
+.st2 .st-glow { background: var(--lime); }
+.st3 .st-glow { background: var(--sky); }
+.st4 .st-glow { background: var(--coral); }
+.stat-tile .st-num {
+  font-family: var(--fh);
+  font-weight: 900;
+  font-size: 32px;
+  letter-spacing: -1px;
+  line-height: 1;
+  margin-bottom: 4px;
+  position: relative;
+}
+.st1 .st-num { color: var(--violet); }
+.st2 .st-num { color: var(--lime); }
+.st3 .st-num { color: var(--sky); }
+.st4 .st-num { color: var(--coral); }
+.st-label { font-size: 12px; color: var(--ink3); font-weight: 600; text-transform: uppercase; letter-spacing: .8px; position: relative; }
+
+/* CONTENT GRID */
+.home-grid {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 20px;
+  padding: 0 32px 32px;
+}
+.section-head {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 16px;
+}
+.section-title {
+  font-family: var(--fh);
+  font-weight: 800;
+  font-size: 18px;
+  color: var(--ink);
+}
+.see-all {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--violet);
+  cursor: pointer;
+  transition: color .15s;
+}
+.see-all:hover { color: var(--pink); }
+
+.activity-list { display: flex; flex-direction: column; gap: 12px; }
+.act-card {
+  background: var(--bg2);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  display: flex;
+  gap: 13px;
+  cursor: pointer;
+  transition: all .2s;
+}
+.act-card:hover {
+  border-color: var(--violet);
+  box-shadow: var(--shadow);
+  transform: translateX(3px);
+}
+.act-av {
+  width: 42px; height: 42px;
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--fh); font-weight: 800; font-size: 15px;
+  color: #fff; flex-shrink: 0;
+}
+.act-title { font-size: 14px; font-weight: 700; color: var(--ink); margin-bottom: 2px; }
+.act-meta { font-size: 11px; color: var(--ink3); }
+.act-excerpt { font-size: 13px; color: var(--ink2); margin-top: 5px; line-height: 1.5; }
+
+/* TAGS */
+.tag-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.chip {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 20px;
+}
+.chip-v  { background: rgba(124,58,237,.1);  color: var(--violet); }
+.chip-p  { background: rgba(240,35,125,.1);  color: var(--pink); }
+.chip-g  { background: rgba(34,208,122,.12); color: var(--lime); }
+.chip-s  { background: rgba(14,165,233,.1);  color: var(--sky); }
+.chip-a  { background: rgba(255,165,0,.12);  color: var(--amber); }
+.chip-c  { background: rgba(255,92,92,.1);   color: var(--coral); }
+
+/* SIDEBAR WIDGETS */
+.widget {
+  background: var(--bg2);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px;
+  margin-bottom: 16px;
+}
+.wg-title { font-family: var(--fh); font-size: 14px; font-weight: 800; color: var(--ink); margin-bottom: 14px; display: flex; align-items: center; gap: 7px; }
+.event-row {
+  display: flex; gap: 12px; align-items: flex-start;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+.event-row:last-child { border-bottom: none; padding-bottom: 0; }
+.ev-cal {
+  min-width: 40px;
+  background: var(--grad-a);
+  border-radius: 10px;
+  padding: 6px 4px;
+  text-align: center;
+  color: #fff;
+}
+.ev-cal .ev-day { font-family: var(--fh); font-weight: 900; font-size: 18px; line-height: 1; }
+.ev-cal .ev-mon { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+.ev-title { font-size: 13px; font-weight: 700; color: var(--ink); }
+.ev-sub { font-size: 11px; color: var(--ink3); margin-top: 1px; }
+
+.rec-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+}
+.rec-row:last-child { border-bottom: none; }
+.rec-name { font-weight: 600; color: var(--ink); }
+.rec-pct { font-weight: 800; font-size: 12px; }
+
+/* ╔══════════════════════════════════════╗
+   ║  MEMORY WALL                         ║
+   ╚══════════════════════════════════════╝ */
+.wall-toolbar {
+  display: flex; gap: 10px; align-items: center;
+  padding: 20px 28px;
+  flex-wrap: wrap;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg2);
+  position: sticky; top: 60px; z-index: 50;
+}
+.wall-search {
+  flex: 1; min-width: 200px;
+  background: var(--bg);
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  padding: 9px 16px 9px 40px;
+  font-family: var(--fb);
+  font-size: 14px;
+  color: var(--ink);
+  outline: none;
+  transition: border-color .15s;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%239399c1' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: 12px center;
+}
+.wall-search:focus { border-color: var(--violet); box-shadow: 0 0 0 3px rgba(124,58,237,.1); }
+.wall-search::placeholder { color: var(--ink3); }
+
+.filter-chip {
+  padding: 7px 14px;
+  border-radius: 20px;
+  border: 1.5px solid var(--border);
+  background: var(--bg2);
+  font-family: var(--fh);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ink2);
+  cursor: pointer;
+  transition: all .15s;
+  white-space: nowrap;
+}
+.filter-chip:hover { border-color: var(--violet); color: var(--violet); }
+.filter-chip.on {
+  background: var(--violet);
+  border-color: var(--violet);
+  color: #fff;
+  box-shadow: 0 3px 12px rgba(124,58,237,.3);
+}
+
+.wall-body { padding: 24px 28px; flex: 1; }
+.wall-masonry {
+  columns: 3;
+  column-gap: 18px;
+}
+@media(max-width:1100px){ .wall-masonry { columns: 2; } }
+
+.post-card {
+  break-inside: avoid;
+  background: var(--bg2);
+  border: 1.5px solid var(--border);
+  border-radius: 18px;
+  overflow: hidden;
+  margin-bottom: 18px;
+  transition: transform .2s, box-shadow .2s;
+  cursor: pointer;
+}
+.post-card:hover { transform: translateY(-3px); box-shadow: 0 10px 36px rgba(124,58,237,.15); }
+
+.post-banner {
+  height: 130px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 52px;
+  position: relative;
+}
+.post-banner-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(to bottom, transparent 30%, rgba(255,255,255,.95));
+}
+
+.post-body { padding: 14px 16px; }
+.post-author-row {
+  display: flex; align-items: center; gap: 8px; margin-bottom: 8px;
+}
+.p-av {
+  width: 26px; height: 26px;
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--fh); font-weight: 800; font-size: 10px;
+  color: #fff; flex-shrink: 0;
+}
+.p-name { font-size: 12px; font-weight: 700; color: var(--ink2); }
+.p-time { font-size: 11px; color: var(--ink3); margin-left: auto; }
+.p-title {
+  font-family: var(--fh); font-weight: 800;
+  font-size: 16px; color: var(--ink);
+  line-height: 1.25; margin-bottom: 7px;
+}
+.p-excerpt { font-size: 13px; color: var(--ink2); line-height: 1.6; }
+.post-footer {
+  padding: 10px 16px 14px;
+  display: flex; align-items: center; gap: 10px;
+}
+.react-btn {
+  display: flex; align-items: center; gap: 5px;
+  font-size: 13px; font-weight: 700; color: var(--ink3);
+  background: var(--bg); border: 1.5px solid var(--border);
+  border-radius: 20px; padding: 4px 11px;
+  cursor: pointer; transition: all .15s;
+}
+.react-btn:hover { border-color: var(--pink); color: var(--pink); background: rgba(240,35,125,.06); }
+.react-btn.liked { border-color: var(--pink); color: var(--pink); background: rgba(240,35,125,.08); }
+
+/* ╔══════════════════════════════════════╗
+   ║  CHANNELS                            ║
+   ╚══════════════════════════════════════╝ */
+.channels-shell {
+  display: flex;
+  flex: 1;
+  height: calc(100vh - 60px);
+  overflow: hidden;
+}
+.ch-sidebar {
+  width: 220px;
+  background: var(--bg2);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  flex-shrink: 0;
+}
+.ch-sidebar-head {
+  padding: 16px 16px 10px;
+  border-bottom: 1px solid var(--border);
+}
+.ch-sidebar-head .csh-title {
+  font-family: var(--fh); font-weight: 800; font-size: 15px; color: var(--ink);
+}
+.ch-group-label {
+  font-size: 10px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 1.5px; color: var(--ink3);
+  padding: 12px 14px 6px;
+}
+.ch-row {
+  display: flex; align-items: center; gap: 9px;
+  padding: 9px 12px;
+  margin: 0 6px 2px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 13px; font-weight: 600; color: var(--ink2);
+  transition: background .15s, color .15s;
+}
+.ch-row:hover { background: var(--bg3); color: var(--ink); }
+.ch-row.active {
+  background: linear-gradient(135deg, rgba(124,58,237,.12), rgba(240,35,125,.08));
+  color: var(--violet);
+}
+.ch-icon {
+  width: 28px; height: 28px; border-radius: 8px;
+  background: var(--bg3);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; flex-shrink: 0;
+}
+.ch-row.active .ch-icon { background: var(--grad-a); }
+.ch-badge {
+  margin-left: auto; width: 8px; height: 8px;
+  background: var(--pink); border-radius: 50%;
+}
+
+.chat-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--bg);
+}
+.chat-topbar {
+  padding: 0 20px;
+  height: 56px;
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 12px;
+  flex-shrink: 0;
+}
+.chat-topbar .ct-name {
+  font-family: var(--fh); font-weight: 800; font-size: 16px; color: var(--ink);
+}
+.chat-topbar .ct-desc { font-size: 12px; color: var(--ink3); }
+.online-pill {
+  margin-left: auto;
+  display: flex; align-items: center; gap: 6px;
+  background: rgba(34,208,122,.1); border: 1px solid rgba(34,208,122,.2);
+  border-radius: 20px; padding: 4px 10px;
+  font-size: 12px; font-weight: 700; color: var(--lime);
+}
+.online-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--lime); animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+
+.chat-feed {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.chat-feed::-webkit-scrollbar { width: 4px; }
+.chat-feed::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+.chat-date-sep {
+  display: flex; align-items: center; gap: 12px;
+  margin: 12px 0;
+  font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--ink3);
+}
+.chat-date-sep::before, .chat-date-sep::after {
+  content: ''; flex: 1; height: 1px; background: var(--border);
+}
+
+.msg-block { display: flex; gap: 11px; margin-bottom: 10px; }
+.msg-av {
+  width: 34px; height: 34px; border-radius: 11px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--fh); font-weight: 800; font-size: 12px;
+  color: #fff; flex-shrink: 0; align-self: flex-start;
+}
+.msg-content {}
+.msg-meta {
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 3px;
+}
+.msg-author { font-size: 14px; font-weight: 700; color: var(--ink); }
+.msg-time { font-size: 11px; color: var(--ink3); }
+.role-pill {
+  font-size: 10px; font-weight: 700; padding: 1px 8px;
+  border-radius: 20px;
+}
+.rp-student { background: rgba(14,165,233,.12); color: var(--sky); }
+.rp-alumni  { background: rgba(124,58,237,.12); color: var(--violet); }
+.rp-admin   { background: rgba(240,35,125,.12); color: var(--pink); }
+.msg-text {
+  font-size: 14px; color: var(--ink2); line-height: 1.6;
+  background: var(--bg2);
+  padding: 9px 14px;
+  border-radius: 0 12px 12px 12px;
+  border: 1.5px solid var(--border);
+  display: inline-block;
+  max-width: 480px;
+}
+
+.chat-inputbar {
+  padding: 14px 20px;
+  background: var(--bg2);
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.chat-input-wrap {
+  display: flex; align-items: flex-end; gap: 8px;
+  background: var(--bg);
+  border: 1.5px solid var(--border);
+  border-radius: 14px;
+  padding: 8px 12px;
+  transition: border-color .15s, box-shadow .15s;
+}
+.chat-input-wrap:focus-within {
+  border-color: var(--violet);
+  box-shadow: 0 0 0 3px rgba(124,58,237,.1);
+}
+.ci-tools {
+  display: flex; gap: 2px;
+}
+.ci-tool-btn {
+  width: 30px; height: 30px; border-radius: 8px;
+  background: none; border: none;
+  color: var(--ink3); cursor: pointer; font-size: 15px;
+  display: flex; align-items: center; justify-content: center;
+  transition: background .15s, color .15s;
+}
+.ci-tool-btn:hover { background: var(--bg3); color: var(--ink2); }
+.ci-input {
+  flex: 1;
+  background: none; border: none; outline: none;
+  color: var(--ink); font-family: var(--fb); font-size: 14px;
+  resize: none; max-height: 100px; line-height: 1.5;
+}
+.ci-input::placeholder { color: var(--ink3); }
+.ci-send {
+  width: 34px; height: 34px;
+  background: var(--grad-a);
+  border: none; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; font-size: 16px;
+  transition: transform .1s, box-shadow .15s;
+  flex-shrink: 0;
+  box-shadow: 0 3px 12px rgba(124,58,237,.3);
+}
+.ci-send:hover { transform: scale(1.05); box-shadow: 0 4px 16px rgba(124,58,237,.4); }
+.ci-hint { font-size: 11px; color: var(--ink3); margin-top: 7px; padding-left: 2px; }
+
+/* ╔══════════════════════════════════════╗
+   ║  PROFILE                             ║
+   ╚══════════════════════════════════════╝ */
+.profile-shell { padding: 28px; flex: 1; }
+.profile-grid { display: grid; grid-template-columns: 300px 1fr; gap: 24px; align-items: start; }
+
+.profile-card {
+  background: var(--bg2);
+  border: 1.5px solid var(--border);
+  border-radius: 20px;
+  overflow: hidden;
+  position: sticky; top: 80px;
+}
+.p-banner {
+  height: 100px;
+  background: var(--grad-a);
+  position: relative;
+  overflow: hidden;
+}
+.p-banner-pattern {
+  position: absolute; inset: 0;
+  background-image: radial-gradient(rgba(255,255,255,.15) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+.p-banner-shapes {
+  position: absolute; inset: 0;
+}
+.p-banner-shapes span {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255,255,255,.1);
+}
+.p-info { padding: 0 20px 20px; }
+.p-avatar-wrap { margin-top: -28px; margin-bottom: 10px; }
+.p-avatar {
+  width: 56px; height: 56px;
+  border-radius: 16px;
+  background: var(--grad-a);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--fh); font-weight: 900; font-size: 20px;
+  color: #fff;
+  border: 4px solid var(--bg2);
+  box-shadow: 0 4px 16px rgba(124,58,237,.3);
+}
+.p-name { font-family: var(--fh); font-weight: 900; font-size: 22px; color: var(--ink); letter-spacing: -.5px; }
+.p-handle { font-size: 13px; color: var(--ink3); margin-bottom: 8px; }
+.p-bio { font-size: 13px; color: var(--ink2); line-height: 1.6; margin-bottom: 12px; }
+.p-meta-item { display: flex; align-items: center; gap: 7px; font-size: 12px; color: var(--ink3); margin-bottom: 5px; }
+.p-actions { margin-top: 14px; display: flex; gap: 8px; }
+
+.p-stats {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  border-top: 1.5px solid var(--border);
+  margin-top: 16px;
+}
+.p-stat { padding: 14px; text-align: center; }
+.p-stat:not(:last-child) { border-right: 1.5px solid var(--border); }
+.p-stat-num { font-family: var(--fh); font-weight: 900; font-size: 22px; color: var(--ink); }
+.p-stat-label { font-size: 10px; color: var(--ink3); font-weight: 600; text-transform: uppercase; letter-spacing: .8px; }
+
+/* TABS */
+.p-tabs { display: flex; gap: 4px; border-bottom: 1.5px solid var(--border); margin-bottom: 20px; }
+.p-tab {
+  padding: 10px 18px;
+  background: none; border: none;
+  border-bottom: 2.5px solid transparent;
+  font-family: var(--fh); font-size: 13px; font-weight: 700;
+  color: var(--ink3); cursor: pointer;
+  transition: color .15s, border-color .15s;
+  margin-bottom: -1.5px;
+}
+.p-tab:hover { color: var(--ink); }
+.p-tab.active { color: var(--violet); border-bottom-color: var(--violet); }
+.p-tab-panel { display: none; }
+.p-tab-panel.active { display: block; }
+
+.skill-list { display: flex; flex-direction: column; gap: 12px; }
+.skill-item {
+  background: var(--bg2); border: 1.5px solid var(--border);
+  border-radius: 14px; padding: 14px 16px;
+}
+.sk-row1 { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.sk-name { font-size: 14px; font-weight: 700; color: var(--ink); }
+.sk-pct { font-family: var(--fh); font-size: 13px; font-weight: 800; }
+.sk-bar { height: 6px; background: var(--bg3); border-radius: 6px; overflow: hidden; }
+.sk-fill { height: 100%; border-radius: 6px; transition: width 1s cubic-bezier(.4,0,.2,1); width: 0; }
+.sk-tag { font-size: 11px; color: var(--ink3); margin-top: 6px; }
+
+.ev-hist-list { display: flex; flex-direction: column; gap: 10px; }
+.ev-hist-card {
+  background: var(--bg2); border: 1.5px solid var(--border);
+  border-radius: 14px; padding: 14px 16px;
+  display: flex; align-items: center; gap: 14px;
+}
+.ev-hist-icon {
+  width: 42px; height: 42px; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; flex-shrink: 0;
+}
+.ev-hist-title { font-size: 14px; font-weight: 700; color: var(--ink); }
+.ev-hist-sub { font-size: 12px; color: var(--ink3); margin-top: 2px; }
+
+/* ╔══════════════════════════════════════╗
+   ║  AUTH                                ║
+   ╚══════════════════════════════════════╝ */
+.auth-overlay {
+  display: none; position: fixed; inset: 0; z-index: 9999;
+  background: var(--bg);
+  align-items: center; justify-content: center;
+  overflow: auto; padding: 20px;
+}
+.auth-overlay.show { display: flex; }
+.auth-wrap { display: grid; grid-template-columns: 1fr 420px; width: 100%; max-width: 860px; min-height: 540px; border-radius: 24px; overflow: hidden; box-shadow: 0 24px 80px rgba(124,58,237,.2); }
+@media(max-width:700px) { .auth-wrap { grid-template-columns: 1fr; } .auth-left { display: none; } }
+.auth-left {
+  background: var(--grad-a);
+  padding: 40px;
+  display: flex; flex-direction: column; justify-content: space-between;
+  position: relative; overflow: hidden;
+}
+.auth-left::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image: radial-gradient(rgba(255,255,255,.12) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+.auth-left .al-logo { font-family: var(--fh); font-weight: 900; font-size: 28px; color: #fff; position: relative; }
+.auth-left .al-tagline { font-family: var(--fh); font-weight: 800; font-size: 34px; color: #fff; line-height: 1.2; letter-spacing: -1px; position: relative; }
+.auth-left .al-sub { font-size: 14px; color: rgba(255,255,255,.7); position: relative; margin-top: 10px; }
+.auth-feat-list { display: flex; flex-direction: column; gap: 10px; position: relative; }
+.auth-feat { display: flex; align-items: center; gap: 10px; color: rgba(255,255,255,.85); font-size: 13px; font-weight: 600; }
+.auth-feat-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,.6); }
+
+.auth-right { background: var(--bg2); padding: 40px; display: flex; flex-direction: column; justify-content: center; }
+.auth-form-title { font-family: var(--fh); font-weight: 900; font-size: 26px; color: var(--ink); margin-bottom: 4px; }
+.auth-form-sub { font-size: 14px; color: var(--ink3); margin-bottom: 28px; }
+
+.f-group { margin-bottom: 16px; }
+.f-label {
+  display: block; font-size: 11px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 1px;
+  color: var(--ink3); margin-bottom: 6px;
+}
+.f-input, .f-select, .f-textarea {
+  width: 100%; background: var(--bg);
+  border: 1.5px solid var(--border);
+  border-radius: 10px; padding: 10px 14px;
+  color: var(--ink); font-family: var(--fb);
+  font-size: 14px; outline: none;
+  transition: border-color .15s, box-shadow .15s;
+}
+.f-input:focus, .f-select:focus, .f-textarea:focus {
+  border-color: var(--violet);
+  box-shadow: 0 0 0 3px rgba(124,58,237,.1);
+}
+.f-textarea { resize: vertical; min-height: 85px; }
+option { background: var(--bg2); }
+
+.auth-domain-note {
+  background: linear-gradient(135deg, rgba(124,58,237,.07), rgba(240,35,125,.04));
+  border: 1.5px solid rgba(124,58,237,.12);
+  border-radius: 10px;
+  padding: 10px 13px;
+  font-size: 12px; color: var(--ink2);
+  margin-top: 12px;
+}
+.auth-divider {
+  display: flex; align-items: center; gap: 12px;
+  margin: 18px 0; color: var(--ink3); font-size: 12px;
+}
+.auth-divider::before, .auth-divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+/* ╔══════════════════════════════════════╗
+   ║  NEW POST MODAL                      ║
+   ╚══════════════════════════════════════╝ */
+.modal-bg {
+  display: none; position: fixed; inset: 0; z-index: 5000;
+  background: rgba(18,21,46,.5);
+  backdrop-filter: blur(5px);
+  align-items: center; justify-content: center; padding: 20px;
+}
+.modal-bg.open { display: flex; }
+.modal-box {
+  background: var(--bg2);
+  border: 1.5px solid var(--border);
+  border-radius: 20px;
+  width: 100%; max-width: 560px;
+  padding: 28px;
+  animation: popIn .2s cubic-bezier(.4,0,.2,1);
+  max-height: 90vh;
+  overflow-y: auto;
+}
+@keyframes popIn {
+  from { opacity:0; transform: scale(.95) translateY(10px); }
+  to   { opacity:1; transform: scale(1) translateY(0); }
+}
+.modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 22px; }
+.modal-title { font-family: var(--fh); font-weight: 900; font-size: 22px; color: var(--ink); }
+.modal-close {
+  width: 32px; height: 32px; border-radius: 9px;
+  background: var(--bg3); border: none;
+  font-size: 17px; cursor: pointer; color: var(--ink2);
+  display: flex; align-items: center; justify-content: center;
+  transition: background .15s;
+}
+.modal-close:hover { background: rgba(240,35,125,.1); color: var(--pink); }
+
+.tag-picker { display: flex; flex-wrap: wrap; gap: 7px; }
+.tp-item {
+  padding: 5px 13px; border-radius: 20px;
+  border: 1.5px solid var(--border); background: var(--bg);
+  font-family: var(--fh); font-size: 12px; font-weight: 700;
+  color: var(--ink2); cursor: pointer;
+  transition: all .15s;
+}
+.tp-item:hover { border-color: var(--violet); color: var(--violet); }
+.tp-item.sel {
+  background: var(--violet);
+  border-color: var(--violet);
+  color: #fff;
+  box-shadow: 0 3px 10px rgba(124,58,237,.25);
+}
+
+.upload-zone {
+  border: 2px dashed var(--border);
+  border-radius: 12px; padding: 22px;
+  text-align: center; cursor: pointer;
+  transition: all .15s;
+  color: var(--ink3); font-size: 13px; font-weight: 600;
+}
+.upload-zone:hover { border-color: var(--violet); background: rgba(124,58,237,.03); color: var(--violet); }
+.upload-zone .uz-icon { font-size: 28px; margin-bottom: 6px; }
+
+/* TOASTS */
+.toast-stack {
+  position: fixed; bottom: 24px; right: 24px;
+  display: flex; flex-direction: column; gap: 8px; z-index: 9000;
+}
+.toast-item {
+  background: var(--bg2);
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  padding: 12px 16px;
+  min-width: 260px;
+  font-size: 13px; font-weight: 600;
+  color: var(--ink);
+  box-shadow: 0 6px 20px rgba(18,21,46,.12);
+  display: flex; align-items: center; gap: 10px;
+  animation: slideUp .25s ease;
+  border-left: 3px solid var(--lime);
+}
+.toast-item.err { border-left-color: var(--pink); }
+@keyframes slideUp { from { transform: translateY(12px); opacity:0; } to { transform: translateY(0); opacity:1; } }
+
+/* ╔══════════════════════════════════════╗
+   ║  SCROLLBAR                           ║
+   ╚══════════════════════════════════════╝ */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 5px; }
+
+/* RESPONSIVE */
+@media(max-width:900px) {
+  .sidebar { transform: translateX(-100%); box-shadow: none; }
+  .sidebar.open { transform: translateX(0); box-shadow: 8px 0 32px rgba(18,21,46,.15); }
+  .main { margin-left: 0; }
+  .menu-toggle { display: flex; }
+  .stats-strip { grid-template-columns: repeat(2,1fr); }
+  .home-grid { grid-template-columns: 1fr; }
+  .home-grid .widget:last-child { display: none; }
+  .profile-grid { grid-template-columns: 1fr; }
+  .profile-card { position: static; }
+  .ch-sidebar { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- ╔══════════════════════════════════════╗
+     ║  AUTH                                ║
+     ╚══════════════════════════════════════╝ -->
+<div class="auth-overlay show" id="authOverlay">
+  <div class="auth-wrap">
+    <!-- Left branding -->
+    <div class="auth-left">
+      <div class="al-logo">⬡ MemoryWall</div>
+      <div>
+        <div class="al-tagline">Your college,<br/>remembered<br/>forever.</div>
+        <div class="al-sub">Share memories, discover events, grow together.</div>
+      </div>
+      <div class="auth-feat-list">
+        <div class="auth-feat"><span class="auth-feat-dot"></span>Post memories with photos & tags</div>
+        <div class="auth-feat"><span class="auth-feat-dot"></span>Live channels for students & alumni</div>
+        <div class="auth-feat"><span class="auth-feat-dot"></span>AI-powered event recommendations</div>
+        <div class="auth-feat"><span class="auth-feat-dot"></span>Skill suggestions based on your interests</div>
+      </div>
+    </div>
+    <!-- Right form -->
+    <div class="auth-right">
+      <div class="auth-form-title">Welcome back 👋</div>
+      <div class="auth-form-sub">Sign in with your college email to continue.</div>
+
+      <div class="f-group">
+        <label class="f-label">College Email</label>
+        <input class="f-input" type="email" id="authEmail" placeholder="you@college.edu"/>
+      </div>
+      <div class="f-group">
+        <label class="f-label">Password</label>
+        <input class="f-input" type="password" id="authPass" placeholder="••••••••"/>
+      </div>
+      <button class="btn btn-grad" style="width:100%;justify-content:center;font-size:15px;padding:12px;" onclick="doLogin()">
+        Sign In →
+      </button>
+      <div class="auth-domain-note">
+        🔒 Only <strong>@college.edu</strong> addresses are allowed. Domain check enforced via Firebase Auth.
+      </div>
+      <div class="auth-divider">or continue with</div>
+      <button class="btn btn-outline" style="width:100%;justify-content:center;" onclick="doLogin()">
+        🎓 Google (College SSO)
+      </button>
+      <p style="margin-top:16px;text-align:center;font-size:12px;color:var(--ink3);">
+        Alumni access? <span style="color:var(--violet);cursor:pointer;font-weight:700;" onclick="doLogin()">Alumni portal →</span>
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- ╔══════════════════════════════════════╗
+     ║  APP                                 ║
+     ╚══════════════════════════════════════╝ -->
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-text">⬡ MemoryWall</div>
+      <div class="logo-sub">Class of 2025 · CSE</div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section">Main</div>
+      <div class="nav-item active" data-pg="home" onclick="nav('home',this)">
+        <div class="nav-icon">🏠</div> Home
+      </div>
+      <div class="nav-item" data-pg="wall" onclick="nav('wall',this)">
+        <div class="nav-icon">🧱</div> Memory Wall
+      </div>
+
+      <div class="nav-section">Channels</div>
+      <div class="nav-item" data-pg="channels" onclick="nav('channels',this)">
+        <div class="nav-icon">#</div> General
+        <span class="nav-badge">3</span>
+      </div>
+      <div class="nav-item" data-pg="channels" onclick="nav('channels',this)">
+        <div class="nav-icon">#</div> Placements
+      </div>
+      <div class="nav-item" data-pg="channels" onclick="nav('channels',this)">
+        <div class="nav-icon">#</div> Alumni Connect
+      </div>
+
+      <div class="nav-section">Account</div>
+      <div class="nav-item" data-pg="profile" onclick="nav('profile',this)">
+        <div class="nav-icon">👤</div> My Profile
+      </div>
+      <div class="nav-item">
+        <div class="nav-icon">🔔</div> Notifications
+      </div>
+      <div class="nav-item" style="margin-top:4px;" onclick="showToast('⚙️ Settings coming soon!')">
+        <div class="nav-icon">⚙️</div> Settings
+      </div>
+    </nav>
+    <div class="sidebar-user" onclick="nav('profile', document.querySelector('[data-pg=profile]'))">
+      <div class="su-avatar">RK</div>
+      <div>
+        <div class="su-name">Rahul Kumar</div>
+        <div class="su-role">Student · CSE '25</div>
+      </div>
+      <div class="su-more">⋯</div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- TOPBAR -->
+    <div class="topbar">
+      <div class="topbar-left">
+        <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+        <span class="topbar-title" id="topbarTitle">Home</span>
+      </div>
+      <div class="topbar-right">
+        <button class="btn btn-outline" onclick="showToast('🔔 No new notifications')">🔔</button>
+        <button class="btn btn-grad" onclick="openModal()">✏️ New Post</button>
+      </div>
+    </div>
+
+    <!-- ╔══════════════════════════════════╗
+         ║  HOME                            ║
+         ╚══════════════════════════════════╝ -->
+    <section class="page active" id="pg-home">
+      <!-- Hero -->
+      <div class="hero">
+        <div class="greeting-pill">
+          <div class="pill-dot">👋</div>
+          Welcome back, Rahul!
+        </div>
+        <h1>Your College<br/><span class="grad-word">Memories</span> Live<br/>
+          <span class="grad-word2">Forever</span> Here.</h1>
+        <p class="hero-sub">Share experiences, connect with batchmates and alumni, and discover events made just for you.</p>
+        <div class="hero-cta">
+          <button class="btn btn-grad" onclick="openModal()">✏️ Share a Memory</button>
+          <button class="btn btn-outline" onclick="nav('wall', document.querySelector('[data-pg=wall]'))">Explore Wall →</button>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="stats-strip">
+        <div class="stat-tile st1">
+          <div class="st-glow"></div>
+          <div class="st-num">847</div>
+          <div class="st-label">Memories Posted</div>
+        </div>
+        <div class="stat-tile st2">
+          <div class="st-glow"></div>
+          <div class="st-num">1.2k</div>
+          <div class="st-label">Active Students</div>
+        </div>
+        <div class="stat-tile st3">
+          <div class="st-glow"></div>
+          <div class="st-num">340</div>
+          <div class="st-label">Alumni Connected</div>
+        </div>
+        <div class="stat-tile st4">
+          <div class="st-glow"></div>
+          <div class="st-num">12</div>
+          <div class="st-label">Events This Month</div>
+        </div>
+      </div>
+
+      <!-- Content grid -->
+      <div class="home-grid">
+        <div>
+          <div class="section-head">
+            <div class="section-title">🔥 Trending on the Wall</div>
+            <span class="see-all" onclick="nav('wall', document.querySelector('[data-pg=wall]'))">See all →</span>
+          </div>
+          <div class="activity-list" id="homeFeed"></div>
+        </div>
+        <div>
+          <div class="widget">
+            <div class="wg-title">📅 Upcoming Events</div>
+            <div id="upcomingEvents"></div>
+          </div>
+          <div class="widget">
+            <div class="wg-title">🎯 Recommended for You</div>
+            <p style="font-size:12px;color:var(--ink3);margin-bottom:10px;">
+              Based on your <strong style="color:var(--violet)">#coding</strong> &amp;
+              <strong style="color:var(--sky)">#placement</strong> tags
+              <!-- Firebase TODO: fetch from user's tag-affinity doc -->
+            </p>
+            <div id="homeRecs"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ╔══════════════════════════════════╗
+         ║  WALL                            ║
+         ╚══════════════════════════════════╝ -->
+    <section class="page" id="pg-wall">
+      <div class="wall-toolbar">
+        <input class="wall-search" type="text" id="wallQ" placeholder="Search memories, tags, people…" oninput="filterWall()"/>
+        <button class="filter-chip on" onclick="setFilter('all',this)">All</button>
+        <button class="filter-chip" onclick="setFilter('hackathon',this)">#hackathon</button>
+        <button class="filter-chip" onclick="setFilter('placement',this)">#placement</button>
+        <button class="filter-chip" onclick="setFilter('cultural',this)">#cultural</button>
+        <button class="filter-chip" onclick="setFilter('sports',this)">#sports</button>
+        <button class="filter-chip" onclick="setFilter('academic',this)">#academic</button>
+      </div>
+      <div class="wall-body">
+        <div class="wall-masonry" id="wallGrid"></div>
+      </div>
+    </section>
+
+    <!-- ╔══════════════════════════════════╗
+         ║  CHANNELS                        ║
+         ╚══════════════════════════════════╝ -->
+    <section class="page" id="pg-channels">
+      <div class="channels-shell">
+        <!-- Channel list -->
+        <div class="ch-sidebar">
+          <div class="ch-sidebar-head">
+            <div class="csh-title">Channels</div>
+          </div>
+          <div class="ch-group-label">Student</div>
+          <div class="ch-row active" onclick="switchCh('general',this)">
+            <div class="ch-icon">💬</div>general
+          </div>
+          <div class="ch-row" onclick="switchCh('placements',this)">
+            <div class="ch-icon">💼</div>placements
+            <div class="ch-badge"></div>
+          </div>
+          <div class="ch-row" onclick="switchCh('technical',this)">
+            <div class="ch-icon">💻</div>technical
+          </div>
+          <div class="ch-row" onclick="switchCh('events',this)">
+            <div class="ch-icon">🎟️</div>events
+          </div>
+          <div class="ch-row" onclick="switchCh('fests',this)">
+            <div class="ch-icon">🎉</div>fests
+          </div>
+          <div class="ch-group-label">Alumni</div>
+          <div class="ch-row" onclick="switchCh('alumni-connect',this)">
+            <div class="ch-icon">🤝</div>alumni-connect
+          </div>
+          <div class="ch-row" onclick="switchCh('mentorship',this)">
+            <div class="ch-icon">🧑‍🏫</div>mentorship
+            <div class="ch-badge"></div>
+          </div>
+        </div>
+
+        <!-- Chat -->
+        <div class="chat-main">
+          <div class="chat-topbar">
+            <div>
+              <div class="ct-name" id="ctName">#general</div>
+              <div class="ct-desc" id="ctDesc">General student discussions</div>
+            </div>
+            <div class="online-pill">
+              <div class="online-dot"></div>
+              <span id="onlineCt">42 online</span>
+            </div>
+          </div>
+          <div class="chat-feed" id="chatFeed"></div>
+          <div class="chat-inputbar">
+            <!-- Firebase TODO: addDoc(collection(db,'channels',ch,'messages'),{...})
+                               onSnapshot listener will push new messages here -->
+            <div class="chat-input-wrap">
+              <div class="ci-tools">
+                <button class="ci-tool-btn" title="Attach">📎</button>
+                <button class="ci-tool-btn" title="Emoji">😊</button>
+              </div>
+              <textarea class="ci-input" id="ciInput" rows="1"
+                placeholder="Message #general"
+                onkeydown="handleKey(event)"
+                oninput="autoH(this)"></textarea>
+              <button class="ci-send" onclick="sendMsg()">➤</button>
+            </div>
+            <p class="ci-hint">Messages are reviewed. Press Enter to send, Shift+Enter for new line.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ╔══════════════════════════════════╗
+         ║  PROFILE                         ║
+         ╚══════════════════════════════════╝ -->
+    <section class="page" id="pg-profile">
+      <div class="profile-shell">
+        <div class="profile-grid">
+          <!-- Profile card -->
+          <div class="profile-card">
+            <div class="p-banner">
+              <div class="p-banner-pattern"></div>
+              <div class="p-banner-shapes">
+                <span style="width:80px;height:80px;top:-20px;right:20px;"></span>
+                <span style="width:50px;height:50px;bottom:0;left:10px;"></span>
+                <span style="width:30px;height:30px;top:30px;left:40%;"></span>
+              </div>
+            </div>
+            <div class="p-info">
+              <div class="p-avatar-wrap">
+                <div class="p-avatar">RK</div>
+              </div>
+              <div class="p-name">Rahul Kumar</div>
+              <div class="p-handle">@rahulk · CSE · Batch 2025</div>
+              <div class="p-bio">Passionate about full-stack dev, competitive coding, and college events. Open to collaborations!</div>
+              <div class="p-meta-item">🏛️ XYZ Engineering College</div>
+              <div class="p-meta-item">📅 Joined August 2021</div>
+              <div class="p-meta-item">📍 Chennai, India</div>
+              <div class="tag-row" style="margin-top:12px;">
+                <span class="chip chip-v">#coding</span>
+                <span class="chip chip-g">#placement</span>
+                <span class="chip chip-a">#hackathon</span>
+                <span class="chip chip-s">#webdev</span>
+              </div>
+              <div class="p-actions">
+                <button class="btn btn-grad" style="flex:1;justify-content:center;font-size:13px;">✏️ Edit</button>
+                <button class="btn btn-outline" style="font-size:13px;" onclick="showToast('🔗 Profile link copied!')">Share</button>
+              </div>
+            </div>
+            <div class="p-stats">
+              <div class="p-stat"><div class="p-stat-num">14</div><div class="p-stat-label">Posts</div></div>
+              <div class="p-stat"><div class="p-stat-num">128</div><div class="p-stat-label">Likes</div></div>
+              <div class="p-stat"><div class="p-stat-num">6</div><div class="p-stat-label">Events</div></div>
+            </div>
+          </div>
+
+          <!-- Right -->
+          <div>
+            <div class="p-tabs">
+              <button class="p-tab active" onclick="pTab('posts',this)">Posts</button>
+              <button class="p-tab" onclick="pTab('skills',this)">Skills & Suggestions</button>
+              <button class="p-tab" onclick="pTab('events',this)">Event History</button>
+            </div>
+            <div class="p-tab-panel active" id="ptp-posts">
+              <div style="display:flex;flex-direction:column;gap:14px" id="profilePostsFeed"></div>
+            </div>
+            <div class="p-tab-panel" id="ptp-skills">
+              <p style="font-size:13px;color:var(--ink3);margin-bottom:16px;">
+                Personalized recommendations based on your tag activity.
+                <!-- Firebase TODO: cross-reference user tag-affinity map with /skills collection -->
+              </p>
+              <div class="skill-list" id="skillList"></div>
+            </div>
+            <div class="p-tab-panel" id="ptp-events">
+              <div class="ev-hist-list" id="evHistList"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- NEW POST MODAL -->
+<div class="modal-bg" id="modalBg" onclick="closeModalOutside(event)">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div class="modal-title">Share a Memory ✨</div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <!-- Firebase TODO: addDoc(collection(db,'posts'), {..., status:'pending', createdAt:serverTimestamp()}) -->
+    <div class="f-group">
+      <label class="f-label">Title</label>
+      <input class="f-input" type="text" id="mTitle" placeholder="Give your memory a headline…"/>
+    </div>
+    <div class="f-group">
+      <label class="f-label">Your Story</label>
+      <textarea class="f-textarea" id="mContent" placeholder="What happened? Tell us the full story…"></textarea>
+    </div>
+    <div class="f-group">
+      <label class="f-label">Category</label>
+      <select class="f-select" id="mCat">
+        <option value="">Select a category</option>
+        <option>Academic</option><option>Placement</option>
+        <option>Cultural Event</option><option>Hackathon</option>
+        <option>Sports</option><option>Alumni</option>
+      </select>
+    </div>
+    <div class="f-group">
+      <label class="f-label">Tags</label>
+      <div class="tag-picker" id="tagPicker"></div>
+    </div>
+    <div class="f-group">
+      <label class="f-label">Photo (optional)</label>
+      <div class="upload-zone" onclick="showToast('📸 Firebase Storage upload will hook here')">
+        <div class="uz-icon">📸</div>
+        Click to upload — Firebase Storage ready
+      </div>
+    </div>
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:6px;">
+      <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-grad" onclick="submitPost()">🚀 Publish</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOASTS -->
+<div class="toast-stack" id="toastStack"></div>
+
+<!-- ╔══════════════════════════════════════╗
+     ║  JAVASCRIPT                          ║
+     ╚══════════════════════════════════════╝ -->
+<script>
+/* ─────────────────────────────────────────
+   DATA  (Replace with Firestore reads)
+───────────────────────────────────────── */
+const COLORS = ['#7c3aed','#f0237d','#22d07a','#0ea5e9','#ffa500','#ff5c5c'];
+const GRADS  = ['linear-gradient(135deg,#7c3aed,#f0237d)','linear-gradient(135deg,#0ea5e9,#22d07a)','linear-gradient(135deg,#ffa500,#ff5c5c)','linear-gradient(135deg,#4f46e5,#7c3aed)','linear-gradient(135deg,#f0237d,#ffa500)','linear-gradient(135deg,#22d07a,#0ea5e9)'];
+
+const ALL_TAGS = ['#coding','#placement','#hackathon','#cultural','#sports','#webdev','#design','#research','#club','#alumni','#fests','#academic'];
+
+/* Firebase TODO: replace with getDocs(query(collection(db,'posts'), orderBy('createdAt','desc'), limit(20))) */
+const POSTS = [
+  { id:1, av:'PS', ci:1, author:'Priya S.', time:'2h ago', title:'Won Best Project at TechExpo! 🏆', excerpt:'Our IoT-based smart irrigation system won the college techfest. Months of effort finally paid off — incredible feeling!', tags:['#hackathon','#coding'], emoji:'🏆', grad:0, ❤:24, 👏:17 },
+  { id:2, av:'AM', ci:2, author:'Arjun M.', time:'5h ago', title:'Placed at Infosys — My Full Journey', excerpt:'After 8 mock interviews and 3 months of DSA grind, I cracked it. Here's the honest breakdown of what actually worked.', tags:['#placement','#coding'], emoji:'🎉', grad:1, ❤:51, 👏:38 },
+  { id:3, av:'SR', ci:4, author:'Sneha R.', time:'Yesterday', title:'Cultural Night was pure magic 🎭', excerpt:'The drama club performed after three months of rehearsals. Standing ovation, tears, the whole deal. Best night of college.', tags:['#cultural','#fests'], emoji:'🎭', grad:2, ❤:33, 👏:12 },
+  { id:4, av:'VN', ci:5, author:'Vikram N.', time:'2d ago', title:'Inter-College Cricket Champions! 🏏', excerpt:'We won the finals in the last over. A memory I\'ll carry forever from this campus. The crowd was unreal.', tags:['#sports'], emoji:'🏏', grad:3, ❤:67, 👏:45 },
+  { id:5, av:'KL', ci:0, author:'Kavya L.', time:'3d ago', title:'My Paper Got Published in IEEE 📄', excerpt:'Six months of late nights in the ML lab paid off. My paper on traffic prediction got accepted to an IEEE conference!', tags:['#academic','#research','#coding'], emoji:'📄', grad:4, ❤:89, 👏:61 },
+  { id:6, av:'RD', ci:3, author:'Rohan D.', time:'4d ago', title:'Alumni Talk Completely Changed My Path', excerpt:'Meeting a Google alumnus at the talk series made me pivot from backend to ML. Best decision I ever made.', tags:['#alumni','#placement'], emoji:'🤝', grad:5, ❤:42, 👏:29 },
+];
+
+/* Firebase TODO: replace with onSnapshot(collection(db,'channels',ch,'messages'), cb) */
+const CH_MSGS = {
+  general: [
+    { av:'AD', ci:5, author:'Admin', role:'admin', time:'10:00 AM', text:'Welcome to #general! Keep it positive and helpful. 🎓' },
+    { av:'PS', ci:1, author:'Priya S.', role:'student', time:'10:14 AM', text:'Hey everyone! Anyone attending the hackathon this Saturday? Looking for a team!' },
+    { av:'AM', ci:2, author:'Arjun M.', role:'student', time:'10:16 AM', text:'Yes! We have a team of 3, need a designer. Reach out!' },
+    { av:'DM', ci:3, author:'Dr. Mehta (Alumni \'18)', role:'alumni', time:'11:32 AM', text:'Happy to mentor anyone prepping for campus placements. DM me directly — happy to help 🙌' },
+    { av:'KL', ci:0, author:'Kavya L.', role:'student', time:'12:05 PM', text:'That's amazing Dr. Mehta! Reaching out now.' },
+  ],
+  placements: [
+    { av:'AM', ci:2, author:'Arjun M.', role:'student', time:'9:00 AM', text:'Infosys pool drive on March 10. Register before Feb 28 on the portal.' },
+    { av:'SR', ci:4, author:'Sneha R.', role:'student', time:'9:20 AM', text:'Anyone have previous year TCS aptitude questions?' },
+    { av:'AR', ci:5, author:'Alumni Rohit', role:'alumni', time:'10:00 AM', text:'I have a compiled PDF from 2022–24. Uploading to the shared drive shortly.' },
+  ],
+};
+
+const SKILLS = [
+  { name:'Data Structures & Algorithms', level:65, color:'var(--violet)', tag:'#coding', grad:'linear-gradient(90deg,#7c3aed,#9b59f7)' },
+  { name:'System Design', level:40, color:'var(--pink)', tag:'#placement', grad:'linear-gradient(90deg,#f0237d,#ff6b9d)' },
+  { name:'React / Frontend Dev', level:75, color:'var(--sky)', tag:'#webdev', grad:'linear-gradient(90deg,#0ea5e9,#38bdf8)' },
+  { name:'Cloud Platforms (AWS/GCP)', level:30, color:'var(--amber)', tag:'#placement', grad:'linear-gradient(90deg,#ffa500,#ffc248)' },
+  { name:'Machine Learning Basics', level:50, color:'var(--lime)', tag:'#research', grad:'linear-gradient(90deg,#22d07a,#4ade80)' },
+  { name:'Public Speaking & Leadership', level:55, color:'var(--coral)', tag:'#cultural', grad:'linear-gradient(90deg,#ff5c5c,#ff8080)' },
+];
+
+const EV_HIST = [
+  { icon:'🏆', title:'TechExpo 2024', sub:'Participant · Nov 2024', chip:'chip-v', tag:'#hackathon', grad:GRADS[0] },
+  { icon:'🤝', title:'Alumni Networking Night', sub:'Attendee · Dec 2024', chip:'chip-a', tag:'#alumni', grad:GRADS[4] },
+  { icon:'🎭', title:'Cultural Night', sub:'Volunteer · Jan 2025', chip:'chip-p', tag:'#cultural', grad:GRADS[2] },
+  { icon:'💻', title:'DSA Bootcamp', sub:'Completed · Feb 2025', chip:'chip-s', tag:'#coding', grad:GRADS[3] },
+];
+
+const EVENTS = [
+  { day:'22', mon:'Feb', title:'Hackathon 2025', sub:'Tech Dept · 24 hrs', tags:['#hackathon','#coding'] },
+  { day:'28', mon:'Feb', title:'Alumni Talk Series', sub:'Auditorium · 3 PM', tags:['#career','#placement'] },
+  { day:'05', mon:'Mar', title:'Cultural Fest', sub:'Ground · 2 days', tags:['#cultural','#fests'] },
+];
+
+const RECS = [
+  { name:'DSA Bootcamp Workshop', pct:'92%', color:'var(--lime)' },
+  { name:'Resume Building Session', pct:'87%', color:'var(--lime)' },
+  { name:'Open Source Hackathon', pct:'74%', color:'var(--sky)' },
+  { name:'Cloud Fundamentals Talk', pct:'61%', color:'var(--violet)' },
+];
+
+/* ─────────────────────────────────────────
+   STATE
+───────────────────────────────────────── */
+let currentFilter = 'all';
+let currentCh = 'general';
+let liked = new Set();
+let localMsgs = JSON.parse(JSON.stringify(CH_MSGS));
+
+/* ─────────────────────────────────────────
+   AUTH  (Firebase TODO: onAuthStateChanged)
+───────────────────────────────────────── */
+function doLogin() {
+  /* Firebase TODO:
+     const email = document.getElementById('authEmail').value;
+     signInWithEmailAndPassword(auth, email, password)
+       .then(cred => {
+         if (!cred.user.email.endsWith('@college.edu')) {
+           signOut(auth); showToast('❌ Unauthorized domain', true); return;
+         }
+         // proceed
+       }).catch(err => showToast('❌ ' + err.message, true));
+  */
+  document.getElementById('authOverlay').classList.remove('show');
+  renderAll();
+  showToast('✅ Signed in successfully!');
+}
+
+/* ─────────────────────────────────────────
+   NAVIGATION
+───────────────────────────────────────── */
+const TITLES = { home:'Home', wall:'Memory Wall', channels:'Channels', profile:'My Profile' };
+
+function nav(pgId, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('pg-' + pgId).classList.add('active');
+  if (el) el.classList.add('active');
+  document.getElementById('topbarTitle').textContent = TITLES[pgId] || pgId;
+  if (window.innerWidth <= 900) document.getElementById('sidebar').classList.remove('open');
+}
+
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+}
+
+/* ─────────────────────────────────────────
+   TAG HELPERS
+───────────────────────────────────────── */
+const TAG_CHIP = { '#coding':'chip-s','#placement':'chip-g','#hackathon':'chip-v','#cultural':'chip-p','#sports':'chip-c','#webdev':'chip-s','#design':'chip-p','#research':'chip-g','#club':'chip-a','#alumni':'chip-a','#fests':'chip-a','#academic':'chip-s','#career':'chip-v' };
+const tagC = t => TAG_CHIP[t] || 'chip-v';
+const chipHTML = tags => tags.map(t => `<span class="chip ${tagC(t)}">${t}</span>`).join('');
+
+/* ─────────────────────────────────────────
+   RENDER ALL
+───────────────────────────────────────── */
+function renderAll() {
+  renderHome();
+  renderWall();
+  renderChat();
+  renderProfile();
+  buildTagPicker();
+}
+
+/* ── HOME ── */
+function renderHome() {
+  // Feed
+  document.getElementById('homeFeed').innerHTML = POSTS.slice(0,4).map(p => `
+    <div class="act-card" onclick="nav('wall',document.querySelector('[data-pg=wall]'))">
+      <div class="act-av" style="background:${GRADS[p.grad]}">${p.av}</div>
+      <div style="flex:1;min-width:0">
+        <div class="act-title">${p.emoji} ${p.title}</div>
+        <div class="act-meta">${p.author} · ${p.time}</div>
+        <div class="act-excerpt">${p.excerpt.slice(0,85)}…</div>
+        <div class="tag-row">${chipHTML(p.tags)}</div>
+      </div>
+    </div>
+  `).join('');
+
+  // Events
+  document.getElementById('upcomingEvents').innerHTML = EVENTS.map(e => `
+    <div class="event-row">
+      <div class="ev-cal"><div class="ev-day">${e.day}</div><div class="ev-mon">${e.mon}</div></div>
+      <div>
+        <div class="ev-title">${e.title}</div>
+        <div class="ev-sub">${e.sub}</div>
+        <div class="tag-row" style="margin-top:5px">${chipHTML(e.tags)}</div>
+      </div>
+    </div>
+  `).join('');
+
+  // Recs
+  document.getElementById('homeRecs').innerHTML = RECS.map(r => `
+    <div class="rec-row">
+      <div class="rec-name">${r.name}</div>
+      <div class="rec-pct" style="color:${r.color}">${r.pct}</div>
+    </div>
+  `).join('');
+}
+
+/* ── WALL ── */
+function renderWall(filter='all', q='') {
+  const grid = document.getElementById('wallGrid');
+  const list = POSTS.filter(p => {
+    const mf = filter === 'all' || p.tags.includes('#'+filter);
+    const mq = !q || p.title.toLowerCase().includes(q) || p.excerpt.toLowerCase().includes(q);
+    return mf && mq;
+  });
+  if (!list.length) {
+    grid.innerHTML = `<div style="text-align:center;padding:60px;color:var(--ink3);grid-column:1/-1">No posts found 🔍</div>`;
+    return;
+  }
+  grid.innerHTML = list.map(p => `
+    <div class="post-card">
+      <div class="post-banner" style="background:${GRADS[p.grad]}22">
+        <span style="position:relative;z-index:1;font-size:54px">${p.emoji}</span>
+        <div class="post-banner-overlay"></div>
+      </div>
+      <div class="post-body">
+        <div class="post-author-row">
+          <div class="p-av" style="background:${GRADS[p.grad]}">${p.av}</div>
+          <span class="p-name">${p.author}</span>
+          <span class="p-time">${p.time}</span>
+        </div>
+        <div class="p-title">${p.title}</div>
+        <div class="p-excerpt">${p.excerpt}</div>
+        <div class="tag-row">${chipHTML(p.tags)}</div>
+      </div>
+      <div class="post-footer">
+        <button class="react-btn ${liked.has(p.id)?'liked':''}" onclick="toggleLike(${p.id},event)">
+          ❤️ <span id="lc-${p.id}">${p['❤'] + (liked.has(p.id)?1:0)}</span>
+        </button>
+        <button class="react-btn">👏 ${p['👏']}</button>
+        <button class="react-btn" style="margin-left:auto" onclick="showToast('🔗 Link copied!')">🔗</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function filterWall() {
+  renderWall(currentFilter, document.getElementById('wallQ').value.toLowerCase());
+}
+function setFilter(f, el) {
+  currentFilter = f;
+  document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('on'));
+  el.classList.add('on');
+  filterWall();
+}
+function toggleLike(id, e) {
+  e.stopPropagation();
+  liked.has(id) ? liked.delete(id) : liked.add(id);
+  /* Firebase TODO: updateDoc(postRef, { likes: increment(liked.has(id) ? 1 : -1) }) */
+  renderWall(currentFilter, document.getElementById('wallQ').value.toLowerCase());
+}
+
+/* ── CHAT ── */
+function renderChat(ch = 'general') {
+  const msgs = localMsgs[ch] || [];
+  const feed = document.getElementById('chatFeed');
+  let html = `<div class="chat-date-sep">Today</div>`;
+  msgs.forEach((m, i) => {
+    const rp = m.role === 'alumni' ? 'rp-alumni' : m.role === 'admin' ? 'rp-admin' : 'rp-student';
+    const rl = m.role === 'alumni' ? 'Alumni' : m.role === 'admin' ? 'Admin' : 'Student';
+    html += `
+      <div class="msg-block">
+        <div class="msg-av" style="background:${GRADS[i % GRADS.length]}">${m.av}</div>
+        <div class="msg-content">
+          <div class="msg-meta">
+            <span class="msg-author">${m.author}</span>
+            <span class="role-pill ${rp}">${rl}</span>
+            <span class="msg-time">${m.time}</span>
+          </div>
+          <div class="msg-text">${m.text}</div>
+        </div>
+      </div>`;
+  });
+  feed.innerHTML = html;
+  feed.scrollTop = feed.scrollHeight;
+}
+
+function switchCh(ch, el) {
+  currentCh = ch;
+  document.querySelectorAll('.ch-row').forEach(r => r.classList.remove('active'));
+  el.classList.add('active');
+  el.querySelector('.ch-badge')?.remove();
+  document.getElementById('ctName').textContent = '#' + ch;
+  const descs = { general:'General student discussions', placements:'Placement prep & drives', technical:'Tech talk & projects', events:'Upcoming events', fests:'Fest planning', 'alumni-connect':'Connect with alumni', mentorship:'Find your mentor' };
+  document.getElementById('ctDesc').textContent = descs[ch] || '';
+  document.getElementById('ciInput').placeholder = `Message #${ch}`;
+  renderChat(ch);
+}
+
+function sendMsg() {
+  const el = document.getElementById('ciInput');
+  const text = el.value.trim();
+  if (!text) return;
+  if (!localMsgs[currentCh]) localMsgs[currentCh] = [];
+  localMsgs[currentCh].push({
+    av:'RK', ci:0, author:'Rahul K.', role:'student',
+    time: new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}),
+    text
+    /* Firebase TODO: await addDoc(collection(db,'channels',currentCh,'messages'),{...}) */
+  });
+  el.value = '';
+  el.style.height = 'auto';
+  renderChat(currentCh);
+  showToast('💬 Sent!');
+}
+
+function handleKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMsg(); }
+}
+function autoH(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 100) + 'px';
+}
+
+/* ── PROFILE ── */
+function renderProfile() {
+  // Posts
+  document.getElementById('profilePostsFeed').innerHTML = POSTS.slice(0,4).map(p => `
+    <div class="act-card" style="cursor:default">
+      <div class="act-av" style="background:${GRADS[p.grad]}">${p.av}</div>
+      <div style="flex:1;min-width:0">
+        <div class="act-title">${p.emoji} ${p.title}</div>
+        <div class="act-meta">${p.time}</div>
+        <div class="act-excerpt">${p.excerpt}</div>
+        <div class="tag-row">${chipHTML(p.tags)}</div>
+      </div>
+    </div>
+  `).join('');
+
+  // Skills — Firebase TODO: fetch /skills, cross-ref user tagAffinity
+  document.getElementById('skillList').innerHTML = SKILLS.map(s => `
+    <div class="skill-item">
+      <div class="sk-row1">
+        <span class="sk-name">${s.name}</span>
+        <span class="sk-pct" style="color:${s.color}">${s.level}%</span>
+      </div>
+      <div class="sk-bar">
+        <div class="sk-fill" data-w="${s.level}" style="background:${s.grad};width:0%"></div>
+      </div>
+      <div class="sk-tag">📌 Suggested via ${s.tag} activity</div>
+    </div>
+  `).join('');
+  // Animate bars
+  requestAnimationFrame(() => {
+    document.querySelectorAll('.sk-fill').forEach(el => {
+      el.style.width = el.dataset.w + '%';
+    });
+  });
+
+  // Events
+  document.getElementById('evHistList').innerHTML = EV_HIST.map(e => `
+    <div class="ev-hist-card">
+      <div class="ev-hist-icon" style="background:${e.grad}">${e.icon}</div>
+      <div>
+        <div class="ev-hist-title">${e.title}</div>
+        <div class="ev-hist-sub">${e.sub}</div>
+      </div>
+      <span class="chip ${e.chip}" style="margin-left:auto">${e.tag}</span>
+    </div>
+  `).join('');
+}
+
+function pTab(id, btn) {
+  document.querySelectorAll('.p-tab').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.p-tab-panel').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('ptp-' + id).classList.add('active');
+  // Re-animate skill bars when switching to skills tab
+  if (id === 'skills') {
+    requestAnimationFrame(() => {
+      document.querySelectorAll('.sk-fill').forEach(el => {
+        el.style.width = '0%';
+        requestAnimationFrame(() => { el.style.width = el.dataset.w + '%'; });
+      });
+    });
+  }
+}
+
+/* ── TAG PICKER (modal) ── */
+function buildTagPicker() {
+  document.getElementById('tagPicker').innerHTML = ALL_TAGS.map(t => `
+    <span class="tp-item" onclick="this.classList.toggle('sel')">${t}</span>
+  `).join('');
+}
+
+/* ─────────────────────────────────────────
+   MODAL
+───────────────────────────────────────── */
+function openModal() {
+  document.getElementById('modalBg').classList.add('open');
+}
+function closeModal() {
+  document.getElementById('modalBg').classList.remove('open');
+}
+function closeModalOutside(e) {
+  if (e.target === document.getElementById('modalBg')) closeModal();
+}
+
+function submitPost() {
+  const title = document.getElementById('mTitle').value.trim();
+  const content = document.getElementById('mContent').value.trim();
+  if (!title || !content) { showToast('⚠️ Fill in title and story!', true); return; }
+  const tags = [...document.querySelectorAll('.tp-item.sel')].map(el => el.textContent);
+  /* Firebase TODO:
+     await addDoc(collection(db,'posts'), {
+       title, content, tags,
+       authorId: auth.currentUser.uid,
+       authorName: auth.currentUser.displayName,
+       createdAt: serverTimestamp(),
+       status: 'pending_review'  // trigger Cloud Function for moderation
+     });
+  */
+  POSTS.unshift({ id:Date.now(), av:'RK', ci:0, author:'Rahul K.', time:'Just now', title, excerpt:content, tags: tags.length ? tags : ['#academic'], emoji:'📝', grad:0, '❤':0, '👏':0 });
+  closeModal();
+  document.getElementById('mTitle').value = '';
+  document.getElementById('mContent').value = '';
+  renderWall(); renderHome();
+  showToast('🎉 Memory submitted for review!');
+}
+
+/* ─────────────────────────────────────────
+   TOAST
+───────────────────────────────────────── */
+function showToast(msg, err=false) {
+  const stack = document.getElementById('toastStack');
+  const t = document.createElement('div');
+  t.className = 'toast-item' + (err?' err':'');
+  t.innerHTML = `<span>${msg}</span>`;
+  stack.appendChild(t);
+  setTimeout(() => { t.style.opacity='0'; t.style.transform='translateY(8px)'; t.style.transition='.25s'; setTimeout(()=>t.remove(),250); }, 3000);
+}
+
+/* ─────────────────────────────────────────
+   INIT  (Firebase TODO: wrap in onAuthStateChanged)
+───────────────────────────────────────── */
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    document.getElementById('authOverlay').classList.remove('show');
+    renderAll();
+  }, 180);
+});
+</script>
+</body>
+</html>
