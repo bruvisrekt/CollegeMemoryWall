@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,9 +6,7 @@
 <title>MemoryWall — Your College, Forever</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
 <style>
-/* ╔══════════════════════════════════════╗
-   ║  DESIGN TOKENS                       ║
-   ╚══════════════════════════════════════╝ */
+
 :root {
   --bg:       #f0f2ff;
   --bg2:      #ffffff;
@@ -55,14 +52,10 @@ body {
   overflow-x: hidden;
 }
 
-/* ╔══════════════════════════════════════╗
-   ║  APP SHELL                           ║
-   ╚══════════════════════════════════════╝ */
+
 .app { display: flex; min-height: 100vh; }
 
-/* ╔══════════════════════════════════════╗
-   ║  SIDEBAR                             ║
-   ╚══════════════════════════════════════╝ */
+
 .sidebar {
   width: var(--sidebar-w);
   background: var(--bg2);
@@ -191,9 +184,7 @@ body {
 .su-role { font-size: 11px; color: var(--ink3); }
 .su-more { margin-left: auto; color: var(--ink3); font-size: 18px; }
 
-/* ╔══════════════════════════════════════╗
-   ║  MAIN                                ║
-   ╚══════════════════════════════════════╝ */
+
 .main {
   margin-left: var(--sidebar-w);
   flex: 1;
@@ -201,7 +192,7 @@ body {
   flex-direction: column;
 }
 
-/* TOPBAR */
+
 .topbar {
   position: sticky; top: 0;
   background: rgba(240,242,255,.88);
@@ -228,7 +219,7 @@ body {
 }
 .topbar-right { display: flex; align-items: center; gap: 10px; }
 
-/* BUTTONS */
+
 .btn {
   display: inline-flex; align-items: center; gap: 7px;
   padding: 9px 18px;
@@ -253,19 +244,17 @@ body {
 }
 .btn-outline:hover { background: var(--bg3); color: var(--ink); }
 
-/* PAGES */
+
 .page { display: none; flex: 1; flex-direction: column; min-height: calc(100vh - 60px); }
 .page.active { display: flex; }
 
-/* ╔══════════════════════════════════════╗
-   ║  HOME PAGE                           ║
-   ╚══════════════════════════════════════╝ */
+
 .hero {
   padding: 40px 32px 0;
   position: relative;
   overflow: hidden;
 }
-/* Colorful blob bg */
+
 .hero::before {
   content: '';
   position: absolute;
@@ -334,7 +323,7 @@ body {
 }
 .hero-cta { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 36px; }
 
-/* STATS STRIP */
+
 .stats-strip {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -377,7 +366,7 @@ body {
 .st4 .st-num { color: var(--coral); }
 .st-label { font-size: 12px; color: var(--ink3); font-weight: 600; text-transform: uppercase; letter-spacing: .8px; position: relative; }
 
-/* CONTENT GRID */
+
 .home-grid {
   display: grid;
   grid-template-columns: 1fr 300px;
@@ -430,7 +419,7 @@ body {
 .act-meta { font-size: 11px; color: var(--ink3); }
 .act-excerpt { font-size: 13px; color: var(--ink2); margin-top: 5px; line-height: 1.5; }
 
-/* TAGS */
+
 .tag-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
 .chip {
   display: inline-block;
@@ -446,7 +435,7 @@ body {
 .chip-a  { background: rgba(255,165,0,.12);  color: var(--amber); }
 .chip-c  { background: rgba(255,92,92,.1);   color: var(--coral); }
 
-/* SIDEBAR WIDGETS */
+
 .widget {
   background: var(--bg2);
   border: 1.5px solid var(--border);
@@ -484,9 +473,7 @@ body {
 .rec-name { font-weight: 600; color: var(--ink); }
 .rec-pct { font-weight: 800; font-size: 12px; }
 
-/* ╔══════════════════════════════════════╗
-   ║  MEMORY WALL                         ║
-   ╚══════════════════════════════════════╝ */
+
 .wall-toolbar {
   display: flex; gap: 10px; align-items: center;
   padding: 20px 28px;
@@ -597,9 +584,7 @@ body {
 .react-btn:hover { border-color: var(--pink); color: var(--pink); background: rgba(240,35,125,.06); }
 .react-btn.liked { border-color: var(--pink); color: var(--pink); background: rgba(240,35,125,.08); }
 
-/* ╔══════════════════════════════════════╗
-   ║  CHANNELS                            ║
-   ╚══════════════════════════════════════╝ */
+
 .channels-shell {
   display: flex;
   flex: 1;
@@ -782,9 +767,7 @@ body {
 .ci-send:hover { transform: scale(1.05); box-shadow: 0 4px 16px rgba(124,58,237,.4); }
 .ci-hint { font-size: 11px; color: var(--ink3); margin-top: 7px; padding-left: 2px; }
 
-/* ╔══════════════════════════════════════╗
-   ║  PROFILE                             ║
-   ╚══════════════════════════════════════╝ */
+
 .profile-shell { padding: 28px; flex: 1; }
 .profile-grid { display: grid; grid-template-columns: 300px 1fr; gap: 24px; align-items: start; }
 
@@ -842,7 +825,7 @@ body {
 .p-stat-num { font-family: var(--fh); font-weight: 900; font-size: 22px; color: var(--ink); }
 .p-stat-label { font-size: 10px; color: var(--ink3); font-weight: 600; text-transform: uppercase; letter-spacing: .8px; }
 
-/* TABS */
+
 .p-tabs { display: flex; gap: 4px; border-bottom: 1.5px solid var(--border); margin-bottom: 20px; }
 .p-tab {
   padding: 10px 18px;
@@ -884,9 +867,7 @@ body {
 .ev-hist-title { font-size: 14px; font-weight: 700; color: var(--ink); }
 .ev-hist-sub { font-size: 12px; color: var(--ink3); margin-top: 2px; }
 
-/* ╔══════════════════════════════════════╗
-   ║  AUTH                                ║
-   ╚══════════════════════════════════════╝ */
+
 .auth-overlay {
   display: none; position: fixed; inset: 0; z-index: 9999;
   background: var(--bg);
@@ -954,9 +935,7 @@ option { background: var(--bg2); }
 }
 .auth-divider::before, .auth-divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
 
-/* ╔══════════════════════════════════════╗
-   ║  NEW POST MODAL                      ║
-   ╚══════════════════════════════════════╝ */
+
 .modal-bg {
   display: none; position: fixed; inset: 0; z-index: 5000;
   background: rgba(18,21,46,.5);
@@ -1015,7 +994,7 @@ option { background: var(--bg2); }
 .upload-zone:hover { border-color: var(--violet); background: rgba(124,58,237,.03); color: var(--violet); }
 .upload-zone .uz-icon { font-size: 28px; margin-bottom: 6px; }
 
-/* TOASTS */
+
 .toast-stack {
   position: fixed; bottom: 24px; right: 24px;
   display: flex; flex-direction: column; gap: 8px; z-index: 9000;
@@ -1036,13 +1015,11 @@ option { background: var(--bg2); }
 .toast-item.err { border-left-color: var(--pink); }
 @keyframes slideUp { from { transform: translateY(12px); opacity:0; } to { transform: translateY(0); opacity:1; } }
 
-/* ╔══════════════════════════════════════╗
-   ║  SCROLLBAR                           ║
-   ╚══════════════════════════════════════╝ */
+
 ::-webkit-scrollbar { width: 5px; height: 5px; }
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 5px; }
 
-/* RESPONSIVE */
+
 @media(max-width:900px) {
   .sidebar { transform: translateX(-100%); box-shadow: none; }
   .sidebar.open { transform: translateX(0); box-shadow: 8px 0 32px rgba(18,21,46,.15); }
@@ -1059,12 +1036,10 @@ option { background: var(--bg2); }
 </head>
 <body>
 
-<!-- ╔══════════════════════════════════════╗
-     ║  AUTH                                ║
-     ╚══════════════════════════════════════╝ -->
+
 <div class="auth-overlay show" id="authOverlay">
   <div class="auth-wrap">
-    <!-- Left branding -->
+    
     <div class="auth-left">
       <div class="al-logo">⬡ MemoryWall</div>
       <div>
@@ -1078,12 +1053,12 @@ option { background: var(--bg2); }
         <div class="auth-feat"><span class="auth-feat-dot"></span>Skill suggestions based on your interests</div>
       </div>
     </div>
-    <!-- Right form -->
+    
     <div class="auth-right">
       <div class="auth-form-title" id="authFormTitle">Welcome back 👋</div>
       <div class="auth-form-sub" id="authFormSub">Sign in with your college email to continue.</div>
 
-      <!-- Register-only fields (hidden by default) -->
+      
       <div id="authRegFields" style="display:none">
         <div class="f-group">
           <label class="f-label">Full Name</label>
@@ -1126,12 +1101,10 @@ option { background: var(--bg2); }
   </div>
 </div>
 
-<!-- ╔══════════════════════════════════════╗
-     ║  APP                                 ║
-     ╚══════════════════════════════════════╝ -->
+
 <div class="app">
 
-  <!-- SIDEBAR -->
+  
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-logo">
       <div class="logo-text">⬡ MemoryWall</div>
@@ -1182,10 +1155,10 @@ option { background: var(--bg2); }
     </div>
   </aside>
 
-  <!-- MAIN -->
+  
   <main class="main">
 
-    <!-- TOPBAR -->
+    
     <div class="topbar">
       <div class="topbar-left">
         <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
@@ -1197,11 +1170,9 @@ option { background: var(--bg2); }
       </div>
     </div>
 
-    <!-- ╔══════════════════════════════════╗
-         ║  HOME                            ║
-         ╚══════════════════════════════════╝ -->
+    
     <section class="page active" id="pg-home">
-      <!-- Hero -->
+      
       <div class="hero">
         <div class="greeting-pill">
           <div class="pill-dot">👋</div>
@@ -1216,7 +1187,7 @@ option { background: var(--bg2); }
         </div>
       </div>
 
-      <!-- Stats -->
+      
       <div class="stats-strip">
         <div class="stat-tile st1">
           <div class="st-glow"></div>
@@ -1240,7 +1211,7 @@ option { background: var(--bg2); }
         </div>
       </div>
 
-      <!-- Content grid -->
+      
       <div class="home-grid">
         <div>
           <div class="section-head">
@@ -1265,9 +1236,7 @@ option { background: var(--bg2); }
       </div>
     </section>
 
-    <!-- ╔══════════════════════════════════╗
-         ║  WALL                            ║
-         ╚══════════════════════════════════╝ -->
+    
     <section class="page" id="pg-wall">
       <div class="wall-toolbar">
         <input class="wall-search" type="text" id="wallQ" placeholder="Search memories, tags, people…" oninput="filterWall()"/>
@@ -1283,12 +1252,10 @@ option { background: var(--bg2); }
       </div>
     </section>
 
-    <!-- ╔══════════════════════════════════╗
-         ║  CHANNELS                        ║
-         ╚══════════════════════════════════╝ -->
+    
     <section class="page" id="pg-channels">
       <div class="channels-shell">
-        <!-- Channel list -->
+        
         <div class="ch-sidebar">
           <div class="ch-sidebar-head">
             <div class="csh-title">Channels</div>
@@ -1320,7 +1287,7 @@ option { background: var(--bg2); }
           </div>
         </div>
 
-        <!-- Chat -->
+        
         <div class="chat-main">
           <div class="chat-topbar">
             <div>
@@ -1334,8 +1301,7 @@ option { background: var(--bg2); }
           </div>
           <div class="chat-feed" id="chatFeed"></div>
           <div class="chat-inputbar">
-            <!-- Firebase TODO: addDoc(collection(db,'channels',ch,'messages'),{...})
-                               onSnapshot listener will push new messages here -->
+            
             <div class="chat-input-wrap">
               <div class="ci-tools">
                 <button class="ci-tool-btn" title="Attach">📎</button>
@@ -1353,13 +1319,11 @@ option { background: var(--bg2); }
       </div>
     </section>
 
-    <!-- ╔══════════════════════════════════╗
-         ║  PROFILE                         ║
-         ╚══════════════════════════════════╝ -->
+    
     <section class="page" id="pg-profile">
       <div class="profile-shell">
         <div class="profile-grid">
-          <!-- Profile card -->
+          
           <div class="profile-card">
             <div class="p-banner">
               <div class="p-banner-pattern"></div>
@@ -1398,7 +1362,7 @@ option { background: var(--bg2); }
             </div>
           </div>
 
-          <!-- Right -->
+          
           <div>
             <div class="p-tabs">
               <button class="p-tab active" onclick="pTab('posts',this)">Posts</button>
@@ -1411,7 +1375,7 @@ option { background: var(--bg2); }
             <div class="p-tab-panel" id="ptp-skills">
               <p style="font-size:13px;color:var(--ink3);margin-bottom:16px;">
                 Personalized recommendations based on your tag activity.
-                <!-- Firebase TODO: cross-reference user tag-affinity map with /skills collection -->
+                
               </p>
               <div class="skill-list" id="skillList"></div>
             </div>
@@ -1426,14 +1390,14 @@ option { background: var(--bg2); }
   </main>
 </div>
 
-<!-- NEW POST MODAL -->
+
 <div class="modal-bg" id="modalBg" onclick="closeModalOutside(event)">
   <div class="modal-box">
     <div class="modal-header">
       <div class="modal-title">Share a Memory ✨</div>
       <button class="modal-close" onclick="closeModal()">✕</button>
     </div>
-    <!-- Firebase TODO: addDoc(collection(db,'posts'), {..., status:'pending', createdAt:serverTimestamp()}) -->
+    
     <div class="f-group">
       <label class="f-label">Title</label>
       <input class="f-input" type="text" id="mTitle" placeholder="Give your memory a headline…"/>
@@ -1477,19 +1441,15 @@ option { background: var(--bg2); }
   </div>
 </div>
 
-<!-- TOASTS -->
+
 <div class="toast-stack" id="toastStack"></div>
 
-<!-- Load localStorage backend (swap this file for Firebase calls later) -->
+
 <script src="db.js"></script>
 
-<!-- ╔══════════════════════════════════════╗
-     ║  APP LOGIC  (wired to DB layer)      ║
-     ╚══════════════════════════════════════╝ -->
+
 <script>
-/* ─────────────────────────────────────────
-   CONSTANTS
-───────────────────────────────────────── */
+
 const GRADS = [
   'linear-gradient(135deg,#7c3aed,#f0237d)',
   'linear-gradient(135deg,#0ea5e9,#22d07a)',
@@ -1503,31 +1463,21 @@ const TAG_CHIP = { '#coding':'chip-s','#placement':'chip-g','#hackathon':'chip-v
 const CH_DESCS = { general:'General student discussions', placements:'Placement prep & drives', technical:'Tech talk & projects', events:'Upcoming events', fests:'Fest planning', 'alumni-connect':'Connect with alumni', mentorship:'Find your mentor' };
 const EMOJI_MAP = { Academic:'📄', Placement:'🎉', 'Cultural Event':'🎭', Hackathon:'🏆', Sports:'🏏', Alumni:'🤝' };
 
-/* ─────────────────────────────────────────
-   STATE
-───────────────────────────────────────── */
+
 let ME = null;           // current user object
 let currentFilter = 'all';
 let currentCh = 'general';
 let chUnsubscribe = null; // channel subscription cleanup fn
 
-/* ─────────────────────────────────────────
-   HELPERS
-───────────────────────────────────────── */
+
 const tagC    = t => TAG_CHIP[t] || 'chip-v';
 const chipHTML = tags => tags.map(t => `<span class="chip ${tagC(t)}">${t}</span>`).join('');
 const grad    = idx => GRADS[(idx || 0) % GRADS.length];
 
-/* ─────────────────────────────────────────
-   AUTH
-   🔥 Firebase swap: onAuthStateChanged handles this automatically
-───────────────────────────────────────── */
-
-// Detect auth mode: 'login' or 'register'
 let authMode = 'login';
 function toggleAuthMode() {
   authMode = authMode === 'login' ? 'register' : 'login';
-  const isReg = authMode === 'register';
+  const isReg = authMode == 'register';
   document.getElementById('authFormTitle').textContent   = isReg ? 'Create account 🎓' : 'Welcome back 👋';
   document.getElementById('authFormSub').textContent     = isReg ? 'Join your college community.' : 'Sign in with your college email to continue.';
   document.getElementById('authRegFields').style.display = isReg ? 'block' : 'none';
@@ -1575,9 +1525,7 @@ function updateSidebarUser() {
   document.querySelector('.logo-sub').textContent  = `Class of ${ME.batch} · ${ME.branch}`;
 }
 
-/* ─────────────────────────────────────────
-   NAVIGATION
-───────────────────────────────────────── */
+
 const TITLES = { home:'Home', wall:'Memory Wall', channels:'Channels', profile:'My Profile' };
 
 function nav(pgId, el) {
@@ -1587,7 +1535,7 @@ function nav(pgId, el) {
   if (el) el.classList.add('active');
   document.getElementById('topbarTitle').textContent = TITLES[pgId] || pgId;
   if (window.innerWidth <= 900) document.getElementById('sidebar').classList.remove('open');
-  // Lazy-load page data on navigation
+
   if (pgId === 'home')     renderHome();
   if (pgId === 'wall')     renderWall();
   if (pgId === 'channels') initChat();
@@ -1598,9 +1546,7 @@ function toggleSidebar() {
   document.getElementById('sidebar').classList.toggle('open');
 }
 
-/* ─────────────────────────────────────────
-   RENDER ALL  (called on login)
-───────────────────────────────────────── */
+
 async function renderAll() {
   buildTagPicker();
   await renderHome();
@@ -1609,21 +1555,17 @@ async function renderAll() {
   await renderProfile();
 }
 
-/* ─────────────────────────────────────────
-   HOME PAGE
-───────────────────────────────────────── */
+
 async function renderHome() {
-  // Stats
+
   const stats = await DB.getStats();
   document.getElementById('statPosts').textContent   = stats.totalPosts;
   document.getElementById('statStudents').textContent = stats.totalStudents >= 1000 ? (stats.totalStudents/1000).toFixed(1)+'k' : stats.totalStudents;
   document.getElementById('statAlumni').textContent  = stats.totalAlumni;
   document.getElementById('statEvents').textContent  = stats.totalEvents;
 
-  // Greeting
   if (ME) document.getElementById('heroGreeting').textContent = `Welcome back, ${ME.name.split(' ')[0]}!`;
 
-  // Recent posts feed
   const posts = await DB.getPosts({ limit: 4 });
   document.getElementById('homeFeed').innerHTML = posts.length
     ? posts.map(p => `
@@ -1638,7 +1580,6 @@ async function renderHome() {
       </div>`).join('')
     : '<p style="color:var(--ink3);font-size:13px;">No posts yet. Be the first to share a memory!</p>';
 
-  // Upcoming events
   const events = await DB.getEvents();
   document.getElementById('upcomingEvents').innerHTML = events.slice(0,3).map(e => `
     <div class="event-row">
@@ -1652,7 +1593,6 @@ async function renderHome() {
         onclick="joinEvent('${e.id}',this)">Join</button>
     </div>`).join('');
 
-  // Personalized event recommendations
   if (ME) {
     const recs = await DB.getEventRecommendations(ME.uid);
     const topTags = Object.entries(ME.tagAffinity || {}).sort((a,b)=>b[1]-a[1]).slice(0,2).map(e=>e[0]);
@@ -1674,7 +1614,7 @@ async function joinEvent(eventId, btn) {
     btn.textContent = '✅ Joined';
     btn.disabled = true;
     showToast('🎉 Registered! Your interests have been updated.');
-    // Refresh recs since affinity changed
+
     renderHome();
   } catch(err) {
     showToast('ℹ️ ' + err.message);
@@ -1683,9 +1623,7 @@ async function joinEvent(eventId, btn) {
   }
 }
 
-/* ─────────────────────────────────────────
-   MEMORY WALL
-───────────────────────────────────────── */
+
 async function renderWall(filter = currentFilter, q = '') {
   const grid = document.getElementById('wallGrid');
   grid.innerHTML = '<div style="text-align:center;padding:40px;color:var(--ink3)">Loading…</div>';
@@ -1745,7 +1683,7 @@ async function doLike(postId, btn) {
   const result = await DB.toggleLike(postId, ME.uid);
   btn.querySelector('span').textContent = result.count;
   btn.classList.toggle('liked', result.liked);
-  // Refresh home feed stats too
+
   renderHome();
 }
 
@@ -1761,14 +1699,12 @@ async function doFlag(postId) {
   showToast('🚩 Post reported for review.');
 }
 
-/* ─────────────────────────────────────────
-   CHANNELS  (with live-poll subscription)
-───────────────────────────────────────── */
+
 function initChat() {
-  // Unsubscribe from previous channel
+
   if (chUnsubscribe) chUnsubscribe();
-  // Subscribe to current channel — polls every 2s, re-renders on new messages
-  // 🔥 Firebase swap: DB.subscribeToChannel internally uses onSnapshot
+
+
   chUnsubscribe = DB.subscribeToChannel(currentCh, msgs => renderMsgs(msgs));
   document.getElementById('ctName').textContent = '#' + currentCh;
   document.getElementById('ctDesc').textContent = CH_DESCS[currentCh] || '';
@@ -1812,7 +1748,7 @@ function switchCh(ch, el) {
   document.getElementById('ctName').textContent = '#' + ch;
   document.getElementById('ctDesc').textContent = CH_DESCS[ch] || '';
   document.getElementById('ciInput').placeholder = `Message #${ch}`;
-  // Re-subscribe to new channel
+
   if (chUnsubscribe) chUnsubscribe();
   chUnsubscribe = DB.subscribeToChannel(ch, msgs => renderMsgs(msgs));
 }
@@ -1826,7 +1762,7 @@ async function sendMsg() {
     await DB.sendMessage(currentCh, text, ME.uid);
     el.value = '';
     el.style.height = 'auto';
-    // subscribeToChannel will auto-render the new message within 2s
+
   } catch(err) {
     showToast('❌ ' + err.message, true);
   }
@@ -1840,23 +1776,18 @@ function autoH(el) {
   el.style.height = Math.min(el.scrollHeight, 100) + 'px';
 }
 
-/* ─────────────────────────────────────────
-   PROFILE PAGE
-───────────────────────────────────────── */
+
 async function renderProfile() {
   if (!ME) return;
 
-  // Header card
   document.querySelector('.p-avatar').textContent = ME.initials;
   document.querySelector('.p-name').textContent   = ME.name;
   document.querySelector('.p-handle').textContent = `@${ME.name.toLowerCase().replace(/\s/g,'')} · ${ME.branch} · Batch ${ME.batch}`;
   document.querySelector('.p-bio').textContent     = ME.bio || 'No bio yet — edit your profile to add one.';
 
-  // Top tags display
   const topTags = Object.entries(ME.tagAffinity || {}).sort((a,b)=>b[1]-a[1]).slice(0,4).map(e=>e[0]);
   document.getElementById('profileTags').innerHTML = topTags.map(t => `<span class="chip ${tagC(t)}">${t}</span>`).join('') || '<span style="color:var(--ink3);font-size:12px">Post memories to build your tag profile!</span>';
 
-  // Stats
   const myPosts = await DB.getPosts({ authorId: ME.uid });
   const totalLikes = myPosts.reduce((s,p) => s + p.likeCount, 0);
   const myEvents = (await DB.getEvents()).filter(e => e.registered.includes(ME.uid));
@@ -1864,7 +1795,6 @@ async function renderProfile() {
   document.getElementById('pStatLikes').textContent  = totalLikes;
   document.getElementById('pStatEvents').textContent = myEvents.length;
 
-  // Posts tab
   document.getElementById('profilePostsFeed').innerHTML = myPosts.length
     ? myPosts.map(p => `
       <div class="act-card" style="cursor:default">
@@ -1878,7 +1808,6 @@ async function renderProfile() {
       </div>`).join('')
     : '<p style="color:var(--ink3);font-size:13px">You haven\'t posted anything yet. Share your first memory!</p>';
 
-  // Skills tab (recommendation engine)
   const skills = await DB.getSkillSuggestions(ME.uid);
   document.getElementById('skillList').innerHTML = skills.length
     ? skills.map(s => `
@@ -1898,7 +1827,6 @@ async function renderProfile() {
     document.querySelectorAll('.sk-fill').forEach(el => { el.style.width = el.dataset.w + '%'; });
   });
 
-  // Registered events tab
   document.getElementById('evHistList').innerHTML = myEvents.length
     ? myEvents.map(e => `
       <div class="ev-hist-card">
@@ -1927,15 +1855,13 @@ function pTab(id, btn) {
   }
 }
 
-/* ─────────────────────────────────────────
-   NEW POST MODAL
-───────────────────────────────────────── */
+
 const EMOJI_OPTIONS = ['📝','🏆','🎉','🎭','🏏','📄','🤝','💡','🚀','🎓','🔥','⚡'];
 let selectedEmoji = '📝';
 
 function openModal() {
   document.getElementById('modalBg').classList.add('open');
-  // Build emoji picker
+
   document.getElementById('emojiPicker').innerHTML = EMOJI_OPTIONS.map(e => `
     <span style="font-size:22px;cursor:pointer;padding:4px;border-radius:7px;transition:background .15s"
       onclick="pickEmoji('${e}',this)"
@@ -1975,7 +1901,7 @@ async function submitPost() {
     document.getElementById('mContent').value = '';
     document.querySelectorAll('.tp-item.sel').forEach(el => el.classList.remove('sel'));
     selectedEmoji = '📝';
-    // Refresh ME (tag affinity updated)
+
     ME = DB.currentUser();
     await renderWall();
     await renderHome();
@@ -1985,9 +1911,7 @@ async function submitPost() {
   }
 }
 
-/* ─────────────────────────────────────────
-   TOAST
-───────────────────────────────────────── */
+
 function showToast(msg, err=false) {
   const stack = document.getElementById('toastStack');
   const t = document.createElement('div');
@@ -1997,12 +1921,9 @@ function showToast(msg, err=false) {
   setTimeout(() => { t.style.opacity='0'; t.style.transform='translateY(8px)'; t.style.transition='.25s'; setTimeout(()=>t.remove(),250); }, 3000);
 }
 
-/* ─────────────────────────────────────────
-   INIT
-   🔥 Firebase swap: wrap everything below in onAuthStateChanged(auth, user => {...})
-───────────────────────────────────────── */
+
 window.addEventListener('load', () => {
-  // Check if there's an existing session in localStorage
+
   ME = DB.currentUser();
   if (ME) {
     document.getElementById('authOverlay').classList.remove('show');
@@ -2010,10 +1931,10 @@ window.addEventListener('load', () => {
     renderAll();
   } else {
     document.getElementById('authOverlay').classList.add('show');
-    // Demo: allow skipping login for development
+
     setTimeout(() => {
       if (document.getElementById('authOverlay').classList.contains('show')) {
-        // Auto sign-in as Rahul for demo (remove this in production)
+
         DB.signIn('rahul@college.edu', 'password123').then(() => {
           ME = DB.currentUser();
           document.getElementById('authOverlay').classList.remove('show');
