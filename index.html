@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1079,8 +1080,26 @@ option { background: var(--bg2); }
     </div>
     <!-- Right form -->
     <div class="auth-right">
-      <div class="auth-form-title">Welcome back 👋</div>
-      <div class="auth-form-sub">Sign in with your college email to continue.</div>
+      <div class="auth-form-title" id="authFormTitle">Welcome back 👋</div>
+      <div class="auth-form-sub" id="authFormSub">Sign in with your college email to continue.</div>
+
+      <!-- Register-only fields (hidden by default) -->
+      <div id="authRegFields" style="display:none">
+        <div class="f-group">
+          <label class="f-label">Full Name</label>
+          <input class="f-input" type="text" id="authName" placeholder="Rahul Kumar"/>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div class="f-group">
+            <label class="f-label">Branch</label>
+            <input class="f-input" type="text" id="authBranch" placeholder="CSE"/>
+          </div>
+          <div class="f-group">
+            <label class="f-label">Batch Year</label>
+            <input class="f-input" type="text" id="authBatch" placeholder="2025"/>
+          </div>
+        </div>
+      </div>
 
       <div class="f-group">
         <label class="f-label">College Email</label>
@@ -1090,7 +1109,7 @@ option { background: var(--bg2); }
         <label class="f-label">Password</label>
         <input class="f-input" type="password" id="authPass" placeholder="••••••••"/>
       </div>
-      <button class="btn btn-grad" style="width:100%;justify-content:center;font-size:15px;padding:12px;" onclick="doLogin()">
+      <button class="btn btn-grad" id="authSubmitBtn" style="width:100%;justify-content:center;font-size:15px;padding:12px;" onclick="doLogin()">
         Sign In →
       </button>
       <div class="auth-domain-note">
@@ -1100,8 +1119,8 @@ option { background: var(--bg2); }
       <button class="btn btn-outline" style="width:100%;justify-content:center;" onclick="doLogin()">
         🎓 Google (College SSO)
       </button>
-      <p style="margin-top:16px;text-align:center;font-size:12px;color:var(--ink3);">
-        Alumni access? <span style="color:var(--violet);cursor:pointer;font-weight:700;" onclick="doLogin()">Alumni portal →</span>
+      <p style="margin-top:14px;text-align:center;font-size:12px;color:var(--ink3);">
+        <span id="authToggleLink" style="color:var(--violet);cursor:pointer;font-weight:700;" onclick="toggleAuthMode()">New here? Create account →</span>
       </p>
     </div>
   </div>
@@ -1146,6 +1165,9 @@ option { background: var(--bg2); }
       <div class="nav-item">
         <div class="nav-icon">🔔</div> Notifications
       </div>
+      <div class="nav-item" style="margin-top:4px;color:var(--coral)" onclick="doLogout()">
+        <div class="nav-icon">🚪</div> Sign Out
+      </div>
       <div class="nav-item" style="margin-top:4px;" onclick="showToast('⚙️ Settings coming soon!')">
         <div class="nav-icon">⚙️</div> Settings
       </div>
@@ -1183,7 +1205,7 @@ option { background: var(--bg2); }
       <div class="hero">
         <div class="greeting-pill">
           <div class="pill-dot">👋</div>
-          Welcome back, Rahul!
+          <span id="heroGreeting">Welcome back!</span>
         </div>
         <h1>Your College<br/><span class="grad-word">Memories</span> Live<br/>
           <span class="grad-word2">Forever</span> Here.</h1>
@@ -1198,22 +1220,22 @@ option { background: var(--bg2); }
       <div class="stats-strip">
         <div class="stat-tile st1">
           <div class="st-glow"></div>
-          <div class="st-num">847</div>
+          <div class="st-num" id="statPosts">—</div>
           <div class="st-label">Memories Posted</div>
         </div>
         <div class="stat-tile st2">
           <div class="st-glow"></div>
-          <div class="st-num">1.2k</div>
+          <div class="st-num" id="statStudents">—</div>
           <div class="st-label">Active Students</div>
         </div>
         <div class="stat-tile st3">
           <div class="st-glow"></div>
-          <div class="st-num">340</div>
+          <div class="st-num" id="statAlumni">—</div>
           <div class="st-label">Alumni Connected</div>
         </div>
         <div class="stat-tile st4">
           <div class="st-glow"></div>
-          <div class="st-num">12</div>
+          <div class="st-num" id="statEvents">—</div>
           <div class="st-label">Events This Month</div>
         </div>
       </div>
@@ -1235,9 +1257,7 @@ option { background: var(--bg2); }
           <div class="widget">
             <div class="wg-title">🎯 Recommended for You</div>
             <p style="font-size:12px;color:var(--ink3);margin-bottom:10px;">
-              Based on your <strong style="color:var(--violet)">#coding</strong> &amp;
-              <strong style="color:var(--sky)">#placement</strong> tags
-              <!-- Firebase TODO: fetch from user's tag-affinity doc -->
+              Based on your <span id="recTagLine">your recent activity</span>
             </p>
             <div id="homeRecs"></div>
           </div>
@@ -1356,6 +1376,7 @@ option { background: var(--bg2); }
               <div class="p-name">Rahul Kumar</div>
               <div class="p-handle">@rahulk · CSE · Batch 2025</div>
               <div class="p-bio">Passionate about full-stack dev, competitive coding, and college events. Open to collaborations!</div>
+              <div id="profileTags" class="tag-row" style="margin-bottom:10px;margin-top:4px"></div>
               <div class="p-meta-item">🏛️ XYZ Engineering College</div>
               <div class="p-meta-item">📅 Joined August 2021</div>
               <div class="p-meta-item">📍 Chennai, India</div>
@@ -1371,9 +1392,9 @@ option { background: var(--bg2); }
               </div>
             </div>
             <div class="p-stats">
-              <div class="p-stat"><div class="p-stat-num">14</div><div class="p-stat-label">Posts</div></div>
-              <div class="p-stat"><div class="p-stat-num">128</div><div class="p-stat-label">Likes</div></div>
-              <div class="p-stat"><div class="p-stat-num">6</div><div class="p-stat-label">Events</div></div>
+              <div class="p-stat"><div class="p-stat-num" id="pStatPosts">—</div><div class="p-stat-label">Posts</div></div>
+              <div class="p-stat"><div class="p-stat-num" id="pStatLikes">—</div><div class="p-stat-label">Likes</div></div>
+              <div class="p-stat"><div class="p-stat-num" id="pStatEvents">—</div><div class="p-stat-label">Events</div></div>
             </div>
           </div>
 
@@ -1435,6 +1456,14 @@ option { background: var(--bg2); }
       <div class="tag-picker" id="tagPicker"></div>
     </div>
     <div class="f-group">
+      <label class="f-label">Pick an Emoji</label>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+        <span id="mEmojiPreview" style="font-size:28px">📝</span>
+        <span style="font-size:12px;color:var(--ink3)">Represents your post</span>
+      </div>
+      <div id="emojiPicker" style="display:flex;flex-wrap:wrap;gap:4px"></div>
+    </div>
+    <div class="f-group">
       <label class="f-label">Photo (optional)</label>
       <div class="upload-zone" onclick="showToast('📸 Firebase Storage upload will hook here')">
         <div class="uz-icon">📸</div>
@@ -1451,98 +1480,99 @@ option { background: var(--bg2); }
 <!-- TOASTS -->
 <div class="toast-stack" id="toastStack"></div>
 
+<!-- Load localStorage backend (swap this file for Firebase calls later) -->
+<script src="db.js"></script>
+
 <!-- ╔══════════════════════════════════════╗
-     ║  JAVASCRIPT                          ║
+     ║  APP LOGIC  (wired to DB layer)      ║
      ╚══════════════════════════════════════╝ -->
 <script>
 /* ─────────────────────────────────────────
-   DATA  (Replace with Firestore reads)
+   CONSTANTS
 ───────────────────────────────────────── */
-const COLORS = ['#7c3aed','#f0237d','#22d07a','#0ea5e9','#ffa500','#ff5c5c'];
-const GRADS  = ['linear-gradient(135deg,#7c3aed,#f0237d)','linear-gradient(135deg,#0ea5e9,#22d07a)','linear-gradient(135deg,#ffa500,#ff5c5c)','linear-gradient(135deg,#4f46e5,#7c3aed)','linear-gradient(135deg,#f0237d,#ffa500)','linear-gradient(135deg,#22d07a,#0ea5e9)'];
-
+const GRADS = [
+  'linear-gradient(135deg,#7c3aed,#f0237d)',
+  'linear-gradient(135deg,#0ea5e9,#22d07a)',
+  'linear-gradient(135deg,#ffa500,#ff5c5c)',
+  'linear-gradient(135deg,#4f46e5,#7c3aed)',
+  'linear-gradient(135deg,#f0237d,#ffa500)',
+  'linear-gradient(135deg,#22d07a,#0ea5e9)',
+];
 const ALL_TAGS = ['#coding','#placement','#hackathon','#cultural','#sports','#webdev','#design','#research','#club','#alumni','#fests','#academic'];
-
-/* Firebase TODO: replace with getDocs(query(collection(db,'posts'), orderBy('createdAt','desc'), limit(20))) */
-const POSTS = [
-  { id:1, av:'PS', ci:1, author:'Priya S.', time:'2h ago', title:'Won Best Project at TechExpo! 🏆', excerpt:'Our IoT-based smart irrigation system won the college techfest. Months of effort finally paid off — incredible feeling!', tags:['#hackathon','#coding'], emoji:'🏆', grad:0, ❤:24, 👏:17 },
-  { id:2, av:'AM', ci:2, author:'Arjun M.', time:'5h ago', title:'Placed at Infosys — My Full Journey', excerpt:'After 8 mock interviews and 3 months of DSA grind, I cracked it. Here's the honest breakdown of what actually worked.', tags:['#placement','#coding'], emoji:'🎉', grad:1, ❤:51, 👏:38 },
-  { id:3, av:'SR', ci:4, author:'Sneha R.', time:'Yesterday', title:'Cultural Night was pure magic 🎭', excerpt:'The drama club performed after three months of rehearsals. Standing ovation, tears, the whole deal. Best night of college.', tags:['#cultural','#fests'], emoji:'🎭', grad:2, ❤:33, 👏:12 },
-  { id:4, av:'VN', ci:5, author:'Vikram N.', time:'2d ago', title:'Inter-College Cricket Champions! 🏏', excerpt:'We won the finals in the last over. A memory I\'ll carry forever from this campus. The crowd was unreal.', tags:['#sports'], emoji:'🏏', grad:3, ❤:67, 👏:45 },
-  { id:5, av:'KL', ci:0, author:'Kavya L.', time:'3d ago', title:'My Paper Got Published in IEEE 📄', excerpt:'Six months of late nights in the ML lab paid off. My paper on traffic prediction got accepted to an IEEE conference!', tags:['#academic','#research','#coding'], emoji:'📄', grad:4, ❤:89, 👏:61 },
-  { id:6, av:'RD', ci:3, author:'Rohan D.', time:'4d ago', title:'Alumni Talk Completely Changed My Path', excerpt:'Meeting a Google alumnus at the talk series made me pivot from backend to ML. Best decision I ever made.', tags:['#alumni','#placement'], emoji:'🤝', grad:5, ❤:42, 👏:29 },
-];
-
-/* Firebase TODO: replace with onSnapshot(collection(db,'channels',ch,'messages'), cb) */
-const CH_MSGS = {
-  general: [
-    { av:'AD', ci:5, author:'Admin', role:'admin', time:'10:00 AM', text:'Welcome to #general! Keep it positive and helpful. 🎓' },
-    { av:'PS', ci:1, author:'Priya S.', role:'student', time:'10:14 AM', text:'Hey everyone! Anyone attending the hackathon this Saturday? Looking for a team!' },
-    { av:'AM', ci:2, author:'Arjun M.', role:'student', time:'10:16 AM', text:'Yes! We have a team of 3, need a designer. Reach out!' },
-    { av:'DM', ci:3, author:'Dr. Mehta (Alumni \'18)', role:'alumni', time:'11:32 AM', text:'Happy to mentor anyone prepping for campus placements. DM me directly — happy to help 🙌' },
-    { av:'KL', ci:0, author:'Kavya L.', role:'student', time:'12:05 PM', text:'That's amazing Dr. Mehta! Reaching out now.' },
-  ],
-  placements: [
-    { av:'AM', ci:2, author:'Arjun M.', role:'student', time:'9:00 AM', text:'Infosys pool drive on March 10. Register before Feb 28 on the portal.' },
-    { av:'SR', ci:4, author:'Sneha R.', role:'student', time:'9:20 AM', text:'Anyone have previous year TCS aptitude questions?' },
-    { av:'AR', ci:5, author:'Alumni Rohit', role:'alumni', time:'10:00 AM', text:'I have a compiled PDF from 2022–24. Uploading to the shared drive shortly.' },
-  ],
-};
-
-const SKILLS = [
-  { name:'Data Structures & Algorithms', level:65, color:'var(--violet)', tag:'#coding', grad:'linear-gradient(90deg,#7c3aed,#9b59f7)' },
-  { name:'System Design', level:40, color:'var(--pink)', tag:'#placement', grad:'linear-gradient(90deg,#f0237d,#ff6b9d)' },
-  { name:'React / Frontend Dev', level:75, color:'var(--sky)', tag:'#webdev', grad:'linear-gradient(90deg,#0ea5e9,#38bdf8)' },
-  { name:'Cloud Platforms (AWS/GCP)', level:30, color:'var(--amber)', tag:'#placement', grad:'linear-gradient(90deg,#ffa500,#ffc248)' },
-  { name:'Machine Learning Basics', level:50, color:'var(--lime)', tag:'#research', grad:'linear-gradient(90deg,#22d07a,#4ade80)' },
-  { name:'Public Speaking & Leadership', level:55, color:'var(--coral)', tag:'#cultural', grad:'linear-gradient(90deg,#ff5c5c,#ff8080)' },
-];
-
-const EV_HIST = [
-  { icon:'🏆', title:'TechExpo 2024', sub:'Participant · Nov 2024', chip:'chip-v', tag:'#hackathon', grad:GRADS[0] },
-  { icon:'🤝', title:'Alumni Networking Night', sub:'Attendee · Dec 2024', chip:'chip-a', tag:'#alumni', grad:GRADS[4] },
-  { icon:'🎭', title:'Cultural Night', sub:'Volunteer · Jan 2025', chip:'chip-p', tag:'#cultural', grad:GRADS[2] },
-  { icon:'💻', title:'DSA Bootcamp', sub:'Completed · Feb 2025', chip:'chip-s', tag:'#coding', grad:GRADS[3] },
-];
-
-const EVENTS = [
-  { day:'22', mon:'Feb', title:'Hackathon 2025', sub:'Tech Dept · 24 hrs', tags:['#hackathon','#coding'] },
-  { day:'28', mon:'Feb', title:'Alumni Talk Series', sub:'Auditorium · 3 PM', tags:['#career','#placement'] },
-  { day:'05', mon:'Mar', title:'Cultural Fest', sub:'Ground · 2 days', tags:['#cultural','#fests'] },
-];
-
-const RECS = [
-  { name:'DSA Bootcamp Workshop', pct:'92%', color:'var(--lime)' },
-  { name:'Resume Building Session', pct:'87%', color:'var(--lime)' },
-  { name:'Open Source Hackathon', pct:'74%', color:'var(--sky)' },
-  { name:'Cloud Fundamentals Talk', pct:'61%', color:'var(--violet)' },
-];
+const TAG_CHIP = { '#coding':'chip-s','#placement':'chip-g','#hackathon':'chip-v','#cultural':'chip-p','#sports':'chip-c','#webdev':'chip-s','#design':'chip-p','#research':'chip-g','#club':'chip-a','#alumni':'chip-a','#fests':'chip-a','#academic':'chip-s','#career':'chip-v' };
+const CH_DESCS = { general:'General student discussions', placements:'Placement prep & drives', technical:'Tech talk & projects', events:'Upcoming events', fests:'Fest planning', 'alumni-connect':'Connect with alumni', mentorship:'Find your mentor' };
+const EMOJI_MAP = { Academic:'📄', Placement:'🎉', 'Cultural Event':'🎭', Hackathon:'🏆', Sports:'🏏', Alumni:'🤝' };
 
 /* ─────────────────────────────────────────
    STATE
 ───────────────────────────────────────── */
+let ME = null;           // current user object
 let currentFilter = 'all';
 let currentCh = 'general';
-let liked = new Set();
-let localMsgs = JSON.parse(JSON.stringify(CH_MSGS));
+let chUnsubscribe = null; // channel subscription cleanup fn
 
 /* ─────────────────────────────────────────
-   AUTH  (Firebase TODO: onAuthStateChanged)
+   HELPERS
 ───────────────────────────────────────── */
-function doLogin() {
-  /* Firebase TODO:
-     const email = document.getElementById('authEmail').value;
-     signInWithEmailAndPassword(auth, email, password)
-       .then(cred => {
-         if (!cred.user.email.endsWith('@college.edu')) {
-           signOut(auth); showToast('❌ Unauthorized domain', true); return;
-         }
-         // proceed
-       }).catch(err => showToast('❌ ' + err.message, true));
-  */
-  document.getElementById('authOverlay').classList.remove('show');
-  renderAll();
-  showToast('✅ Signed in successfully!');
+const tagC    = t => TAG_CHIP[t] || 'chip-v';
+const chipHTML = tags => tags.map(t => `<span class="chip ${tagC(t)}">${t}</span>`).join('');
+const grad    = idx => GRADS[(idx || 0) % GRADS.length];
+
+/* ─────────────────────────────────────────
+   AUTH
+   🔥 Firebase swap: onAuthStateChanged handles this automatically
+───────────────────────────────────────── */
+
+// Detect auth mode: 'login' or 'register'
+let authMode = 'login';
+function toggleAuthMode() {
+  authMode = authMode === 'login' ? 'register' : 'login';
+  const isReg = authMode === 'register';
+  document.getElementById('authFormTitle').textContent   = isReg ? 'Create account 🎓' : 'Welcome back 👋';
+  document.getElementById('authFormSub').textContent     = isReg ? 'Join your college community.' : 'Sign in with your college email to continue.';
+  document.getElementById('authRegFields').style.display = isReg ? 'block' : 'none';
+  document.getElementById('authSubmitBtn').textContent   = isReg ? 'Create Account →' : 'Sign In →';
+  document.getElementById('authToggleLink').textContent  = isReg ? 'Already have an account? Sign in →' : 'New here? Create account →';
+}
+
+async function doLogin() {
+  const email = document.getElementById('authEmail').value.trim();
+  const pass  = document.getElementById('authPass').value;
+  try {
+    if (authMode === 'register') {
+      const name   = document.getElementById('authName').value.trim();
+      const branch = document.getElementById('authBranch').value.trim();
+      const batch  = document.getElementById('authBatch').value.trim();
+      if (!name || !branch || !batch) { showToast('⚠️ Fill in all fields.', true); return; }
+      await DB.register(email, pass, name, branch, batch);
+      showToast('🎉 Account created!');
+    } else {
+      await DB.signIn(email, pass);
+      showToast('✅ Signed in!');
+    }
+    ME = DB.currentUser();
+    document.getElementById('authOverlay').classList.remove('show');
+    updateSidebarUser();
+    renderAll();
+  } catch (err) {
+    showToast('❌ ' + err.message, true);
+  }
+}
+
+async function doLogout() {
+  await DB.signOut();
+  ME = null;
+  if (chUnsubscribe) { chUnsubscribe(); chUnsubscribe = null; }
+  document.getElementById('authOverlay').classList.add('show');
+  showToast('👋 Signed out.');
+}
+
+function updateSidebarUser() {
+  if (!ME) return;
+  document.querySelector('.su-avatar').textContent = ME.initials;
+  document.querySelector('.su-name').textContent   = ME.name;
+  document.querySelector('.su-role').textContent   = `${ME.role === 'student' ? 'Student' : ME.role} · ${ME.branch} '${ME.batch}`;
+  document.querySelector('.logo-sub').textContent  = `Class of ${ME.batch} · ${ME.branch}`;
 }
 
 /* ─────────────────────────────────────────
@@ -1557,6 +1587,11 @@ function nav(pgId, el) {
   if (el) el.classList.add('active');
   document.getElementById('topbarTitle').textContent = TITLES[pgId] || pgId;
   if (window.innerWidth <= 900) document.getElementById('sidebar').classList.remove('open');
+  // Lazy-load page data on navigation
+  if (pgId === 'home')     renderHome();
+  if (pgId === 'wall')     renderWall();
+  if (pgId === 'channels') initChat();
+  if (pgId === 'profile')  renderProfile();
 }
 
 function toggleSidebar() {
@@ -1564,96 +1599,135 @@ function toggleSidebar() {
 }
 
 /* ─────────────────────────────────────────
-   TAG HELPERS
+   RENDER ALL  (called on login)
 ───────────────────────────────────────── */
-const TAG_CHIP = { '#coding':'chip-s','#placement':'chip-g','#hackathon':'chip-v','#cultural':'chip-p','#sports':'chip-c','#webdev':'chip-s','#design':'chip-p','#research':'chip-g','#club':'chip-a','#alumni':'chip-a','#fests':'chip-a','#academic':'chip-s','#career':'chip-v' };
-const tagC = t => TAG_CHIP[t] || 'chip-v';
-const chipHTML = tags => tags.map(t => `<span class="chip ${tagC(t)}">${t}</span>`).join('');
-
-/* ─────────────────────────────────────────
-   RENDER ALL
-───────────────────────────────────────── */
-function renderAll() {
-  renderHome();
-  renderWall();
-  renderChat();
-  renderProfile();
+async function renderAll() {
   buildTagPicker();
+  await renderHome();
+  await renderWall();
+  initChat();
+  await renderProfile();
 }
 
-/* ── HOME ── */
-function renderHome() {
-  // Feed
-  document.getElementById('homeFeed').innerHTML = POSTS.slice(0,4).map(p => `
-    <div class="act-card" onclick="nav('wall',document.querySelector('[data-pg=wall]'))">
-      <div class="act-av" style="background:${GRADS[p.grad]}">${p.av}</div>
-      <div style="flex:1;min-width:0">
-        <div class="act-title">${p.emoji} ${p.title}</div>
-        <div class="act-meta">${p.author} · ${p.time}</div>
-        <div class="act-excerpt">${p.excerpt.slice(0,85)}…</div>
-        <div class="tag-row">${chipHTML(p.tags)}</div>
-      </div>
-    </div>
-  `).join('');
+/* ─────────────────────────────────────────
+   HOME PAGE
+───────────────────────────────────────── */
+async function renderHome() {
+  // Stats
+  const stats = await DB.getStats();
+  document.getElementById('statPosts').textContent   = stats.totalPosts;
+  document.getElementById('statStudents').textContent = stats.totalStudents >= 1000 ? (stats.totalStudents/1000).toFixed(1)+'k' : stats.totalStudents;
+  document.getElementById('statAlumni').textContent  = stats.totalAlumni;
+  document.getElementById('statEvents').textContent  = stats.totalEvents;
 
-  // Events
-  document.getElementById('upcomingEvents').innerHTML = EVENTS.map(e => `
+  // Greeting
+  if (ME) document.getElementById('heroGreeting').textContent = `Welcome back, ${ME.name.split(' ')[0]}!`;
+
+  // Recent posts feed
+  const posts = await DB.getPosts({ limit: 4 });
+  document.getElementById('homeFeed').innerHTML = posts.length
+    ? posts.map(p => `
+      <div class="act-card" onclick="nav('wall',document.querySelector('[data-pg=wall]'))">
+        <div class="act-av" style="background:${grad(p.gradIndex)}">${p.authorInitials}</div>
+        <div style="flex:1;min-width:0">
+          <div class="act-title">${p.emoji} ${p.title}</div>
+          <div class="act-meta">${p.authorName} · ${p.timeAgo}</div>
+          <div class="act-excerpt">${p.excerpt.slice(0,90)}…</div>
+          <div class="tag-row">${chipHTML(p.tags)}</div>
+        </div>
+      </div>`).join('')
+    : '<p style="color:var(--ink3);font-size:13px;">No posts yet. Be the first to share a memory!</p>';
+
+  // Upcoming events
+  const events = await DB.getEvents();
+  document.getElementById('upcomingEvents').innerHTML = events.slice(0,3).map(e => `
     <div class="event-row">
       <div class="ev-cal"><div class="ev-day">${e.day}</div><div class="ev-mon">${e.mon}</div></div>
-      <div>
+      <div style="flex:1">
         <div class="ev-title">${e.title}</div>
         <div class="ev-sub">${e.sub}</div>
         <div class="tag-row" style="margin-top:5px">${chipHTML(e.tags)}</div>
       </div>
-    </div>
-  `).join('');
+      <button class="btn btn-outline" style="font-size:11px;padding:5px 10px;flex-shrink:0"
+        onclick="joinEvent('${e.id}',this)">Join</button>
+    </div>`).join('');
 
-  // Recs
-  document.getElementById('homeRecs').innerHTML = RECS.map(r => `
-    <div class="rec-row">
-      <div class="rec-name">${r.name}</div>
-      <div class="rec-pct" style="color:${r.color}">${r.pct}</div>
-    </div>
-  `).join('');
+  // Personalized event recommendations
+  if (ME) {
+    const recs = await DB.getEventRecommendations(ME.uid);
+    const topTags = Object.entries(ME.tagAffinity || {}).sort((a,b)=>b[1]-a[1]).slice(0,2).map(e=>e[0]);
+    document.getElementById('recTagLine').innerHTML = topTags.length
+      ? topTags.map(t=>`<strong style="color:var(--violet)">${t}</strong>`).join(' &amp; ') + ' tags'
+      : 'your recent activity';
+    document.getElementById('homeRecs').innerHTML = recs.slice(0,4).map(r => `
+      <div class="rec-row">
+        <div class="rec-name">${r.title}</div>
+        <div class="rec-pct" style="color:${r.matchPct>70?'var(--lime)':r.matchPct>50?'var(--sky)':'var(--violet)'}">${r.matchPct}%</div>
+      </div>`).join('') || '<p style="font-size:12px;color:var(--ink3)">Interact with posts to get recommendations!</p>';
+  }
 }
 
-/* ── WALL ── */
-function renderWall(filter='all', q='') {
+async function joinEvent(eventId, btn) {
+  if (!ME) return;
+  try {
+    await DB.registerForEvent(eventId, ME.uid);
+    btn.textContent = '✅ Joined';
+    btn.disabled = true;
+    showToast('🎉 Registered! Your interests have been updated.');
+    // Refresh recs since affinity changed
+    renderHome();
+  } catch(err) {
+    showToast('ℹ️ ' + err.message);
+    btn.textContent = '✅ Already joined';
+    btn.disabled = true;
+  }
+}
+
+/* ─────────────────────────────────────────
+   MEMORY WALL
+───────────────────────────────────────── */
+async function renderWall(filter = currentFilter, q = '') {
   const grid = document.getElementById('wallGrid');
-  const list = POSTS.filter(p => {
-    const mf = filter === 'all' || p.tags.includes('#'+filter);
-    const mq = !q || p.title.toLowerCase().includes(q) || p.excerpt.toLowerCase().includes(q);
-    return mf && mq;
-  });
-  if (!list.length) {
-    grid.innerHTML = `<div style="text-align:center;padding:60px;color:var(--ink3);grid-column:1/-1">No posts found 🔍</div>`;
+  grid.innerHTML = '<div style="text-align:center;padding:40px;color:var(--ink3)">Loading…</div>';
+
+  let posts = await DB.getPosts({ limit: 50 });
+  if (filter !== 'all') posts = posts.filter(p => p.tags.includes('#' + filter));
+  if (q) posts = posts.filter(p => p.title.toLowerCase().includes(q) || p.excerpt.toLowerCase().includes(q));
+
+  if (!posts.length) {
+    grid.innerHTML = '<div style="text-align:center;padding:60px;color:var(--ink3)">No posts found 🔍</div>';
     return;
   }
-  grid.innerHTML = list.map(p => `
+
+  const myLikes = new Set(posts.filter(p => p.likes.includes(ME?.uid)).map(p => p.id));
+
+  grid.innerHTML = posts.map(p => `
     <div class="post-card">
-      <div class="post-banner" style="background:${GRADS[p.grad]}22">
+      <div class="post-banner" style="background:${grad(p.gradIndex)}22">
         <span style="position:relative;z-index:1;font-size:54px">${p.emoji}</span>
         <div class="post-banner-overlay"></div>
       </div>
       <div class="post-body">
         <div class="post-author-row">
-          <div class="p-av" style="background:${GRADS[p.grad]}">${p.av}</div>
-          <span class="p-name">${p.author}</span>
-          <span class="p-time">${p.time}</span>
+          <div class="p-av" style="background:${grad(p.gradIndex)}">${p.authorInitials}</div>
+          <span class="p-name">${p.authorName}</span>
+          <span class="p-time">${p.timeAgo}</span>
         </div>
         <div class="p-title">${p.title}</div>
         <div class="p-excerpt">${p.excerpt}</div>
         <div class="tag-row">${chipHTML(p.tags)}</div>
       </div>
       <div class="post-footer">
-        <button class="react-btn ${liked.has(p.id)?'liked':''}" onclick="toggleLike(${p.id},event)">
-          ❤️ <span id="lc-${p.id}">${p['❤'] + (liked.has(p.id)?1:0)}</span>
+        <button class="react-btn ${myLikes.has(p.id)?'liked':''}" id="lb-${p.id}" onclick="doLike('${p.id}',this)">
+          ❤️ <span>${p.likeCount}</span>
         </button>
-        <button class="react-btn">👏 ${p['👏']}</button>
+        <button class="react-btn" id="cb-${p.id}" onclick="doClap('${p.id}',this)">
+          👏 <span>${p.clapCount}</span>
+        </button>
         <button class="react-btn" style="margin-left:auto" onclick="showToast('🔗 Link copied!')">🔗</button>
+        <button class="react-btn" onclick="doFlag('${p.id}')" title="Report post">🚩</button>
       </div>
-    </div>
-  `).join('');
+    </div>`).join('');
 }
 
 function filterWall() {
@@ -1665,36 +1739,69 @@ function setFilter(f, el) {
   el.classList.add('on');
   filterWall();
 }
-function toggleLike(id, e) {
-  e.stopPropagation();
-  liked.has(id) ? liked.delete(id) : liked.add(id);
-  /* Firebase TODO: updateDoc(postRef, { likes: increment(liked.has(id) ? 1 : -1) }) */
-  renderWall(currentFilter, document.getElementById('wallQ').value.toLowerCase());
+
+async function doLike(postId, btn) {
+  if (!ME) { showToast('⚠️ Sign in to like posts.', true); return; }
+  const result = await DB.toggleLike(postId, ME.uid);
+  btn.querySelector('span').textContent = result.count;
+  btn.classList.toggle('liked', result.liked);
+  // Refresh home feed stats too
+  renderHome();
 }
 
-/* ── CHAT ── */
-function renderChat(ch = 'general') {
-  const msgs = localMsgs[ch] || [];
+async function doClap(postId, btn) {
+  if (!ME) { showToast('⚠️ Sign in first.', true); return; }
+  const result = await DB.toggleClap(postId, ME.uid);
+  btn.querySelector('span').textContent = result.count;
+}
+
+async function doFlag(postId) {
+  if (!ME) return;
+  await DB.flagPost(postId, ME.uid, 'user_report');
+  showToast('🚩 Post reported for review.');
+}
+
+/* ─────────────────────────────────────────
+   CHANNELS  (with live-poll subscription)
+───────────────────────────────────────── */
+function initChat() {
+  // Unsubscribe from previous channel
+  if (chUnsubscribe) chUnsubscribe();
+  // Subscribe to current channel — polls every 2s, re-renders on new messages
+  // 🔥 Firebase swap: DB.subscribeToChannel internally uses onSnapshot
+  chUnsubscribe = DB.subscribeToChannel(currentCh, msgs => renderMsgs(msgs));
+  document.getElementById('ctName').textContent = '#' + currentCh;
+  document.getElementById('ctDesc').textContent = CH_DESCS[currentCh] || '';
+  document.getElementById('ciInput').placeholder = `Message #${currentCh}`;
+}
+
+function renderMsgs(msgs) {
   const feed = document.getElementById('chatFeed');
+  if (!msgs.length) {
+    feed.innerHTML = `<div class="chat-date-sep">Today</div><p style="text-align:center;color:var(--ink3);font-size:13px;padding:30px 0">No messages yet — say hi! 👋</p>`;
+    return;
+  }
+  const wasAtBottom = feed.scrollHeight - feed.scrollTop - feed.clientHeight < 60;
   let html = `<div class="chat-date-sep">Today</div>`;
   msgs.forEach((m, i) => {
     const rp = m.role === 'alumni' ? 'rp-alumni' : m.role === 'admin' ? 'rp-admin' : 'rp-student';
-    const rl = m.role === 'alumni' ? 'Alumni' : m.role === 'admin' ? 'Admin' : 'Student';
+    const rl = { alumni:'Alumni', admin:'Admin', student:'Student' }[m.role] || 'Student';
+    const isMe = ME && m.authorId === ME.uid;
     html += `
-      <div class="msg-block">
-        <div class="msg-av" style="background:${GRADS[i % GRADS.length]}">${m.av}</div>
+      <div class="msg-block" ${isMe ? 'style="flex-direction:row-reverse;text-align:right"' : ''}>
+        <div class="msg-av" style="background:${grad(m.gradIndex)}">${m.authorInitials}</div>
         <div class="msg-content">
-          <div class="msg-meta">
-            <span class="msg-author">${m.author}</span>
+          <div class="msg-meta" ${isMe ? 'style="justify-content:flex-end"' : ''}>
+            <span class="msg-author">${isMe ? 'You' : m.authorName}</span>
             <span class="role-pill ${rp}">${rl}</span>
-            <span class="msg-time">${m.time}</span>
+            <span class="msg-time">${m.timeFormatted}</span>
           </div>
-          <div class="msg-text">${m.text}</div>
+          <div class="msg-text" ${isMe ? 'style="background:linear-gradient(135deg,rgba(124,58,237,.12),rgba(240,35,125,.08));border-color:rgba(124,58,237,.2)"' : ''}>${m.text}</div>
         </div>
       </div>`;
   });
   feed.innerHTML = html;
-  feed.scrollTop = feed.scrollHeight;
+  if (wasAtBottom) feed.scrollTop = feed.scrollHeight;
 }
 
 function switchCh(ch, el) {
@@ -1703,27 +1810,26 @@ function switchCh(ch, el) {
   el.classList.add('active');
   el.querySelector('.ch-badge')?.remove();
   document.getElementById('ctName').textContent = '#' + ch;
-  const descs = { general:'General student discussions', placements:'Placement prep & drives', technical:'Tech talk & projects', events:'Upcoming events', fests:'Fest planning', 'alumni-connect':'Connect with alumni', mentorship:'Find your mentor' };
-  document.getElementById('ctDesc').textContent = descs[ch] || '';
+  document.getElementById('ctDesc').textContent = CH_DESCS[ch] || '';
   document.getElementById('ciInput').placeholder = `Message #${ch}`;
-  renderChat(ch);
+  // Re-subscribe to new channel
+  if (chUnsubscribe) chUnsubscribe();
+  chUnsubscribe = DB.subscribeToChannel(ch, msgs => renderMsgs(msgs));
 }
 
-function sendMsg() {
+async function sendMsg() {
   const el = document.getElementById('ciInput');
   const text = el.value.trim();
   if (!text) return;
-  if (!localMsgs[currentCh]) localMsgs[currentCh] = [];
-  localMsgs[currentCh].push({
-    av:'RK', ci:0, author:'Rahul K.', role:'student',
-    time: new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}),
-    text
-    /* Firebase TODO: await addDoc(collection(db,'channels',currentCh,'messages'),{...}) */
-  });
-  el.value = '';
-  el.style.height = 'auto';
-  renderChat(currentCh);
-  showToast('💬 Sent!');
+  if (!ME) { showToast('⚠️ Sign in to chat.', true); return; }
+  try {
+    await DB.sendMessage(currentCh, text, ME.uid);
+    el.value = '';
+    el.style.height = 'auto';
+    // subscribeToChannel will auto-render the new message within 2s
+  } catch(err) {
+    showToast('❌ ' + err.message, true);
+  }
 }
 
 function handleKey(e) {
@@ -1734,52 +1840,76 @@ function autoH(el) {
   el.style.height = Math.min(el.scrollHeight, 100) + 'px';
 }
 
-/* ── PROFILE ── */
-function renderProfile() {
-  // Posts
-  document.getElementById('profilePostsFeed').innerHTML = POSTS.slice(0,4).map(p => `
-    <div class="act-card" style="cursor:default">
-      <div class="act-av" style="background:${GRADS[p.grad]}">${p.av}</div>
-      <div style="flex:1;min-width:0">
-        <div class="act-title">${p.emoji} ${p.title}</div>
-        <div class="act-meta">${p.time}</div>
-        <div class="act-excerpt">${p.excerpt}</div>
-        <div class="tag-row">${chipHTML(p.tags)}</div>
-      </div>
-    </div>
-  `).join('');
+/* ─────────────────────────────────────────
+   PROFILE PAGE
+───────────────────────────────────────── */
+async function renderProfile() {
+  if (!ME) return;
 
-  // Skills — Firebase TODO: fetch /skills, cross-ref user tagAffinity
-  document.getElementById('skillList').innerHTML = SKILLS.map(s => `
-    <div class="skill-item">
-      <div class="sk-row1">
-        <span class="sk-name">${s.name}</span>
-        <span class="sk-pct" style="color:${s.color}">${s.level}%</span>
-      </div>
-      <div class="sk-bar">
-        <div class="sk-fill" data-w="${s.level}" style="background:${s.grad};width:0%"></div>
-      </div>
-      <div class="sk-tag">📌 Suggested via ${s.tag} activity</div>
-    </div>
-  `).join('');
-  // Animate bars
+  // Header card
+  document.querySelector('.p-avatar').textContent = ME.initials;
+  document.querySelector('.p-name').textContent   = ME.name;
+  document.querySelector('.p-handle').textContent = `@${ME.name.toLowerCase().replace(/\s/g,'')} · ${ME.branch} · Batch ${ME.batch}`;
+  document.querySelector('.p-bio').textContent     = ME.bio || 'No bio yet — edit your profile to add one.';
+
+  // Top tags display
+  const topTags = Object.entries(ME.tagAffinity || {}).sort((a,b)=>b[1]-a[1]).slice(0,4).map(e=>e[0]);
+  document.getElementById('profileTags').innerHTML = topTags.map(t => `<span class="chip ${tagC(t)}">${t}</span>`).join('') || '<span style="color:var(--ink3);font-size:12px">Post memories to build your tag profile!</span>';
+
+  // Stats
+  const myPosts = await DB.getPosts({ authorId: ME.uid });
+  const totalLikes = myPosts.reduce((s,p) => s + p.likeCount, 0);
+  const myEvents = (await DB.getEvents()).filter(e => e.registered.includes(ME.uid));
+  document.getElementById('pStatPosts').textContent  = myPosts.length;
+  document.getElementById('pStatLikes').textContent  = totalLikes;
+  document.getElementById('pStatEvents').textContent = myEvents.length;
+
+  // Posts tab
+  document.getElementById('profilePostsFeed').innerHTML = myPosts.length
+    ? myPosts.map(p => `
+      <div class="act-card" style="cursor:default">
+        <div class="act-av" style="background:${grad(p.gradIndex)}">${p.authorInitials}</div>
+        <div style="flex:1;min-width:0">
+          <div class="act-title">${p.emoji} ${p.title}</div>
+          <div class="act-meta">${p.timeAgo} · ${p.likeCount} ❤️ · ${p.clapCount} 👏</div>
+          <div class="act-excerpt">${p.excerpt}</div>
+          <div class="tag-row">${chipHTML(p.tags)}</div>
+        </div>
+      </div>`).join('')
+    : '<p style="color:var(--ink3);font-size:13px">You haven\'t posted anything yet. Share your first memory!</p>';
+
+  // Skills tab (recommendation engine)
+  const skills = await DB.getSkillSuggestions(ME.uid);
+  document.getElementById('skillList').innerHTML = skills.length
+    ? skills.map(s => `
+      <div class="skill-item">
+        <div class="sk-row1">
+          <span class="sk-name">${s.name}</span>
+          <span class="sk-pct" style="color:${s.color}">${s.level}%</span>
+        </div>
+        <div class="sk-bar">
+          <div class="sk-fill" data-w="${s.level}" style="background:${s.grad};width:0%"></div>
+        </div>
+        <div class="sk-tag">📌 Suggested via ${s.suggestedVia} activity</div>
+      </div>`).join('')
+    : '<p style="color:var(--ink3);font-size:13px">Like posts and join events to get personalized skill suggestions!</p>';
+
   requestAnimationFrame(() => {
-    document.querySelectorAll('.sk-fill').forEach(el => {
-      el.style.width = el.dataset.w + '%';
-    });
+    document.querySelectorAll('.sk-fill').forEach(el => { el.style.width = el.dataset.w + '%'; });
   });
 
-  // Events
-  document.getElementById('evHistList').innerHTML = EV_HIST.map(e => `
-    <div class="ev-hist-card">
-      <div class="ev-hist-icon" style="background:${e.grad}">${e.icon}</div>
-      <div>
-        <div class="ev-hist-title">${e.title}</div>
-        <div class="ev-hist-sub">${e.sub}</div>
-      </div>
-      <span class="chip ${e.chip}" style="margin-left:auto">${e.tag}</span>
-    </div>
-  `).join('');
+  // Registered events tab
+  document.getElementById('evHistList').innerHTML = myEvents.length
+    ? myEvents.map(e => `
+      <div class="ev-hist-card">
+        <div class="ev-hist-icon" style="background:${GRADS[0]}">${e.title[0]}</div>
+        <div>
+          <div class="ev-hist-title">${e.title}</div>
+          <div class="ev-hist-sub">${e.sub}</div>
+        </div>
+        <div class="tag-row">${chipHTML(e.tags)}</div>
+      </div>`).join('')
+    : '<p style="color:var(--ink3);font-size:13px">Join events from the home page to see them here.</p>';
 }
 
 function pTab(id, btn) {
@@ -1787,7 +1917,6 @@ function pTab(id, btn) {
   document.querySelectorAll('.p-tab-panel').forEach(p => p.classList.remove('active'));
   btn.classList.add('active');
   document.getElementById('ptp-' + id).classList.add('active');
-  // Re-animate skill bars when switching to skills tab
   if (id === 'skills') {
     requestAnimationFrame(() => {
       document.querySelectorAll('.sk-fill').forEach(el => {
@@ -1798,46 +1927,62 @@ function pTab(id, btn) {
   }
 }
 
-/* ── TAG PICKER (modal) ── */
-function buildTagPicker() {
-  document.getElementById('tagPicker').innerHTML = ALL_TAGS.map(t => `
-    <span class="tp-item" onclick="this.classList.toggle('sel')">${t}</span>
-  `).join('');
-}
-
 /* ─────────────────────────────────────────
-   MODAL
+   NEW POST MODAL
 ───────────────────────────────────────── */
+const EMOJI_OPTIONS = ['📝','🏆','🎉','🎭','🏏','📄','🤝','💡','🚀','🎓','🔥','⚡'];
+let selectedEmoji = '📝';
+
 function openModal() {
   document.getElementById('modalBg').classList.add('open');
+  // Build emoji picker
+  document.getElementById('emojiPicker').innerHTML = EMOJI_OPTIONS.map(e => `
+    <span style="font-size:22px;cursor:pointer;padding:4px;border-radius:7px;transition:background .15s"
+      onclick="pickEmoji('${e}',this)"
+      title="${e}">${e}</span>`).join('');
+}
+function pickEmoji(e, el) {
+  selectedEmoji = e;
+  document.querySelectorAll('#emojiPicker span').forEach(s => s.style.background='');
+  el.style.background = 'rgba(124,58,237,.15)';
+  document.getElementById('mEmojiPreview').textContent = e;
 }
 function closeModal() {
   document.getElementById('modalBg').classList.remove('open');
 }
-function closeModalOutside(e) {
-  if (e.target === document.getElementById('modalBg')) closeModal();
+function closeModalOutside(ev) {
+  if (ev.target === document.getElementById('modalBg')) closeModal();
 }
 
-function submitPost() {
-  const title = document.getElementById('mTitle').value.trim();
+function buildTagPicker() {
+  document.getElementById('tagPicker').innerHTML = ALL_TAGS.map(t => `
+    <span class="tp-item" onclick="this.classList.toggle('sel')">${t}</span>`).join('');
+}
+
+async function submitPost() {
+  if (!ME) { showToast('⚠️ Sign in first!', true); return; }
+  const title   = document.getElementById('mTitle').value.trim();
   const content = document.getElementById('mContent').value.trim();
+  const cat     = document.getElementById('mCat').value;
   if (!title || !content) { showToast('⚠️ Fill in title and story!', true); return; }
-  const tags = [...document.querySelectorAll('.tp-item.sel')].map(el => el.textContent);
-  /* Firebase TODO:
-     await addDoc(collection(db,'posts'), {
-       title, content, tags,
-       authorId: auth.currentUser.uid,
-       authorName: auth.currentUser.displayName,
-       createdAt: serverTimestamp(),
-       status: 'pending_review'  // trigger Cloud Function for moderation
-     });
-  */
-  POSTS.unshift({ id:Date.now(), av:'RK', ci:0, author:'Rahul K.', time:'Just now', title, excerpt:content, tags: tags.length ? tags : ['#academic'], emoji:'📝', grad:0, '❤':0, '👏':0 });
-  closeModal();
-  document.getElementById('mTitle').value = '';
-  document.getElementById('mContent').value = '';
-  renderWall(); renderHome();
-  showToast('🎉 Memory submitted for review!');
+  const tags    = [...document.querySelectorAll('.tp-item.sel')].map(el => el.textContent);
+  const emoji   = selectedEmoji || EMOJI_MAP[cat] || '📝';
+
+  try {
+    await DB.createPost({ title, content, tags: tags.length ? tags : ['#academic'], category: cat, emoji, authorId: ME.uid });
+    closeModal();
+    document.getElementById('mTitle').value = '';
+    document.getElementById('mContent').value = '';
+    document.querySelectorAll('.tp-item.sel').forEach(el => el.classList.remove('sel'));
+    selectedEmoji = '📝';
+    // Refresh ME (tag affinity updated)
+    ME = DB.currentUser();
+    await renderWall();
+    await renderHome();
+    showToast('🎉 Memory submitted for review!');
+  } catch(err) {
+    showToast('❌ ' + err.message, true);
+  }
 }
 
 /* ─────────────────────────────────────────
@@ -1853,13 +1998,31 @@ function showToast(msg, err=false) {
 }
 
 /* ─────────────────────────────────────────
-   INIT  (Firebase TODO: wrap in onAuthStateChanged)
+   INIT
+   🔥 Firebase swap: wrap everything below in onAuthStateChanged(auth, user => {...})
 ───────────────────────────────────────── */
 window.addEventListener('load', () => {
-  setTimeout(() => {
+  // Check if there's an existing session in localStorage
+  ME = DB.currentUser();
+  if (ME) {
     document.getElementById('authOverlay').classList.remove('show');
+    updateSidebarUser();
     renderAll();
-  }, 180);
+  } else {
+    document.getElementById('authOverlay').classList.add('show');
+    // Demo: allow skipping login for development
+    setTimeout(() => {
+      if (document.getElementById('authOverlay').classList.contains('show')) {
+        // Auto sign-in as Rahul for demo (remove this in production)
+        DB.signIn('rahul@college.edu', 'password123').then(() => {
+          ME = DB.currentUser();
+          document.getElementById('authOverlay').classList.remove('show');
+          updateSidebarUser();
+          renderAll();
+        }).catch(() => {});
+      }
+    }, 1500);
+  }
 });
 </script>
 </body>
