@@ -1,0 +1,2707 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>MemoryWall — Your College, Forever</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+/* ╔══════════════════════════════════════╗
+   ║  DESIGN TOKENS                       ║
+   ╚══════════════════════════════════════╝ */
+:root {
+  --bg:       #f0f2ff;
+  --bg2:      #ffffff;
+  --bg3:      #eef0fb;
+  --border:   #e2e5f8;
+
+  --ink:      #12152e;
+  --ink2:     #4a4f7a;
+  --ink3:     #9399c1;
+
+  --violet:   #7c3aed;
+  --violet2:  #9b59f7;
+  --pink:     #f0237d;
+  --coral:    #ff5c5c;
+  --amber:    #ffa500;
+  --lime:     #22d07a;
+  --sky:      #0ea5e9;
+  --indigo:   #4f46e5;
+
+  --grad-a: linear-gradient(135deg, #7c3aed, #f0237d);
+  --grad-b: linear-gradient(135deg, #0ea5e9, #22d07a);
+  --grad-c: linear-gradient(135deg, #ffa500, #ff5c5c);
+  --grad-d: linear-gradient(135deg, #4f46e5, #7c3aed);
+
+  --sidebar-w: 248px;
+  --radius: 14px;
+  --fh: 'Nunito', sans-serif;
+  --fb: 'Space Grotesk', sans-serif;
+
+  --shadow: 0 4px 24px rgba(124,58,237,.12);
+  --shadow2: 0 2px 8px rgba(18,21,46,.08);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--fb);
+  font-size: 15px;
+  line-height: 1.6;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ╔══════════════════════════════════════╗
+   ║  APP SHELL                           ║
+   ╚══════════════════════════════════════╝ */
+.app { display: flex; min-height: 100vh; }
+
+/* ╔══════════════════════════════════════╗
+   ║  SIDEBAR                             ║
+   ╚══════════════════════════════════════╝ */
+.sidebar {
+  width: var(--sidebar-w);
+  background: var(--bg2);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  z-index: 200;
+  transition: transform .3s cubic-bezier(.4,0,.2,1);
+}
+
+.sidebar-logo {
+  padding: 22px 20px 18px;
+  border-bottom: 1px solid var(--border);
+}
+.logo-text {
+  font-family: var(--fh);
+  font-weight: 900;
+  font-size: 22px;
+  letter-spacing: -0.5px;
+  background: var(--grad-a);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.logo-sub {
+  font-size: 11px;
+  color: var(--ink3);
+  font-weight: 500;
+  letter-spacing: .5px;
+  margin-top: 1px;
+}
+
+.sidebar-nav {
+  flex: 1;
+  padding: 14px 12px;
+  overflow-y: auto;
+}
+
+.nav-section {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--ink3);
+  padding: 12px 10px 6px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  cursor: pointer;
+  color: var(--ink2);
+  font-size: 14px;
+  font-weight: 600;
+  transition: background .15s, color .15s;
+  margin-bottom: 2px;
+  user-select: none;
+  position: relative;
+}
+.nav-item:hover { background: var(--bg3); color: var(--ink); }
+.nav-item.active {
+  background: linear-gradient(135deg, rgba(124,58,237,.12), rgba(240,35,125,.08));
+  color: var(--violet);
+}
+.nav-item.active::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 20%; bottom: 20%;
+  width: 3px;
+  background: var(--grad-a);
+  border-radius: 4px;
+}
+.nav-icon {
+  width: 32px; height: 32px;
+  border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+  flex-shrink: 0;
+  background: var(--bg3);
+  transition: all .15s;
+}
+.nav-item.active .nav-icon {
+  background: var(--grad-a);
+}
+.nav-badge {
+  margin-left: auto;
+  background: var(--pink);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 1px 7px;
+  border-radius: 20px;
+  font-family: var(--fh);
+}
+
+.sidebar-user {
+  margin: 12px;
+  padding: 12px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgba(124,58,237,.07), rgba(240,35,125,.05));
+  border: 1px solid rgba(124,58,237,.12);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: box-shadow .15s;
+}
+.sidebar-user:hover { box-shadow: var(--shadow); }
+.su-avatar {
+  width: 38px; height: 38px;
+  border-radius: 12px;
+  background: var(--grad-a);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--fh);
+  font-weight: 800;
+  font-size: 14px;
+  color: #fff;
+  flex-shrink: 0;
+}
+.su-name { font-size: 13px; font-weight: 700; color: var(--ink); }
+.su-role { font-size: 11px; color: var(--ink3); }
+.su-more { margin-left: auto; color: var(--ink3); font-size: 18px; }
+
+/* ╔══════════════════════════════════════╗
+   ║  MAIN                                ║
+   ╚══════════════════════════════════════╝ */
+.main {
+  margin-left: var(--sidebar-w);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* TOPBAR */
+.topbar {
+  position: sticky; top: 0;
+  background: rgba(240,242,255,.88);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 28px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 100;
+}
+.topbar-left { display: flex; align-items: center; gap: 14px; }
+.topbar-title {
+  font-family: var(--fh);
+  font-weight: 800;
+  font-size: 20px;
+  color: var(--ink);
+}
+.menu-toggle {
+  display: none;
+  background: none; border: none;
+  color: var(--ink2); font-size: 22px; cursor: pointer;
+}
+.topbar-right { display: flex; align-items: center; gap: 10px; }
+
+/* BUTTONS */
+.btn {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 9px 18px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  font-family: var(--fh);
+  font-size: 13px;
+  font-weight: 700;
+  transition: all .15s;
+}
+.btn-grad {
+  background: var(--grad-a);
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(124,58,237,.35);
+}
+.btn-grad:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(124,58,237,.4); }
+.btn-outline {
+  background: transparent;
+  color: var(--ink2);
+  border: 1.5px solid var(--border);
+}
+.btn-outline:hover { background: var(--bg3); color: var(--ink); }
+
+/* PAGES */
+.page { display: none; flex: 1; flex-direction: column; min-height: calc(100vh - 60px); }
+.page.active { display: flex; }
+
+/* ╔══════════════════════════════════════╗
+   ║  HOME PAGE                           ║
+   ╚══════════════════════════════════════╝ */
+.hero {
+  padding: 40px 32px 0;
+  position: relative;
+  overflow: hidden;
+}
+/* Colorful blob bg */
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -80px; right: -100px;
+  width: 500px; height: 500px;
+  background: radial-gradient(circle at 60% 40%, rgba(124,58,237,.14) 0%, rgba(240,35,125,.08) 50%, transparent 70%);
+  pointer-events: none;
+}
+.hero::after {
+  content: '';
+  position: absolute;
+  bottom: -60px; left: -60px;
+  width: 300px; height: 300px;
+  background: radial-gradient(circle, rgba(14,165,233,.1) 0%, transparent 70%);
+  pointer-events: none;
+}
+.greeting-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: var(--bg2);
+  border: 1.5px solid var(--border);
+  border-radius: 30px;
+  padding: 5px 14px 5px 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink2);
+  margin-bottom: 20px;
+  box-shadow: var(--shadow2);
+}
+.greeting-pill .pill-dot {
+  width: 24px; height: 24px;
+  border-radius: 8px;
+  background: var(--grad-a);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px;
+}
+.hero h1 {
+  font-family: var(--fh);
+  font-size: clamp(34px, 4.5vw, 58px);
+  font-weight: 900;
+  line-height: 1.08;
+  letter-spacing: -1.5px;
+  color: var(--ink);
+  margin-bottom: 16px;
+  position: relative;
+}
+.hero h1 .grad-word {
+  background: var(--grad-a);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.hero h1 .grad-word2 {
+  background: var(--grad-c);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.hero-sub {
+  font-size: 16px;
+  color: var(--ink2);
+  max-width: 480px;
+  margin-bottom: 28px;
+  font-weight: 400;
+}
+.hero-cta { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 36px; }
+
+/* STATS STRIP */
+.stats-strip {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  padding: 0 32px 32px;
+}
+.stat-tile {
+  background: var(--bg2);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  position: relative;
+  overflow: hidden;
+  transition: transform .2s, box-shadow .2s;
+}
+.stat-tile:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+.stat-tile .st-glow {
+  position: absolute;
+  top: -20px; right: -20px;
+  width: 90px; height: 90px;
+  border-radius: 50%;
+  opacity: .25;
+}
+.st1 .st-glow { background: var(--violet); }
+.st2 .st-glow { background: var(--lime); }
+.st3 .st-glow { background: var(--sky); }
+.st4 .st-glow { background: var(--coral); }
+.stat-tile .st-num {
+  font-family: var(--fh);
+  font-weight: 900;
+  font-size: 32px;
+  letter-spacing: -1px;
+  line-height: 1;
+  margin-bottom: 4px;
+  position: relative;
+}
+.st1 .st-num { color: var(--violet); }
+.st2 .st-num { color: var(--lime); }
+.st3 .st-num { color: var(--sky); }
+.st4 .st-num { color: var(--coral); }
+.st-label { font-size: 12px; color: var(--ink3); font-weight: 600; text-transform: uppercase; letter-spacing: .8px; position: relative; }
+
+/* CONTENT GRID */
+.home-grid {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 20px;
+  padding: 0 32px 32px;
+}
+.section-head {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 16px;
+}
+.section-title {
+  font-family: var(--fh);
+  font-weight: 800;
+  font-size: 18px;
+  color: var(--ink);
+}
+.see-all {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--violet);
+  cursor: pointer;
+  transition: color .15s;
+}
+.see-all:hover { color: var(--pink); }
+
+.activity-list { display: flex; flex-direction: column; gap: 12px; }
+.act-card {
+  background: var(--bg2);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  display: flex;
+  gap: 13px;
+  cursor: pointer;
+  transition: all .2s;
+}
+.act-card:hover {
+  border-color: var(--violet);
+  box-shadow: var(--shadow);
+  transform: translateX(3px);
+}
+.act-av {
+  width: 42px; height: 42px;
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--fh); font-weight: 800; font-size: 15px;
+  color: #fff; flex-shrink: 0;
+}
+.act-title { font-size: 14px; font-weight: 700; color: var(--ink); margin-bottom: 2px; }
+.act-meta { font-size: 11px; color: var(--ink3); }
+.act-excerpt { font-size: 13px; color: var(--ink2); margin-top: 5px; line-height: 1.5; }
+
+/* TAGS */
+.tag-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.chip {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 20px;
+}
+.chip-v  { background: rgba(124,58,237,.1);  color: var(--violet); }
+.chip-p  { background: rgba(240,35,125,.1);  color: var(--pink); }
+.chip-g  { background: rgba(34,208,122,.12); color: var(--lime); }
+.chip-s  { background: rgba(14,165,233,.1);  color: var(--sky); }
+.chip-a  { background: rgba(255,165,0,.12);  color: var(--amber); }
+.chip-c  { background: rgba(255,92,92,.1);   color: var(--coral); }
+
+/* SIDEBAR WIDGETS */
+.widget {
+  background: var(--bg2);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px;
+  margin-bottom: 16px;
+}
+.wg-title { font-family: var(--fh); font-size: 14px; font-weight: 800; color: var(--ink); margin-bottom: 14px; display: flex; align-items: center; gap: 7px; }
+.event-row {
+  display: flex; gap: 12px; align-items: flex-start;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+.event-row:last-child { border-bottom: none; padding-bottom: 0; }
+.ev-cal {
+  min-width: 40px;
+  background: var(--grad-a);
+  border-radius: 10px;
+  padding: 6px 4px;
+  text-align: center;
+  color: #fff;
+}
+.ev-cal .ev-day { font-family: var(--fh); font-weight: 900; font-size: 18px; line-height: 1; }
+.ev-cal .ev-mon { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+.ev-title { font-size: 13px; font-weight: 700; color: var(--ink); }
+.ev-sub { font-size: 11px; color: var(--ink3); margin-top: 1px; }
+
+.rec-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+}
+.rec-row:last-child { border-bottom: none; }
+.rec-name { font-weight: 600; color: var(--ink); }
+.rec-pct { font-weight: 800; font-size: 12px; }
+
+/* ╔══════════════════════════════════════╗
+   ║  MEMORY WALL                         ║
+   ╚══════════════════════════════════════╝ */
+.wall-toolbar {
+  display: flex; gap: 10px; align-items: center;
+  padding: 20px 28px;
+  flex-wrap: wrap;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg2);
+  position: sticky; top: 60px; z-index: 50;
+}
+.wall-search {
+  flex: 1; min-width: 200px;
+  background: var(--bg);
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  padding: 9px 16px 9px 40px;
+  font-family: var(--fb);
+  font-size: 14px;
+  color: var(--ink);
+  outline: none;
+  transition: border-color .15s;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%239399c1' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: 12px center;
+}
+.wall-search:focus { border-color: var(--violet); box-shadow: 0 0 0 3px rgba(124,58,237,.1); }
+.wall-search::placeholder { color: var(--ink3); }
+
+.filter-chip {
+  padding: 7px 14px;
+  border-radius: 20px;
+  border: 1.5px solid var(--border);
+  background: var(--bg2);
+  font-family: var(--fh);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ink2);
+  cursor: pointer;
+  transition: all .15s;
+  white-space: nowrap;
+}
+.filter-chip:hover { border-color: var(--violet); color: var(--violet); }
+.filter-chip.on {
+  background: var(--violet);
+  border-color: var(--violet);
+  color: #fff;
+  box-shadow: 0 3px 12px rgba(124,58,237,.3);
+}
+
+.wall-body { padding: 24px 28px; flex: 1; }
+.wall-masonry {
+  columns: 3;
+  column-gap: 18px;
+}
+@media(max-width:1100px){ .wall-masonry { columns: 2; } }
+
+.post-card {
+  break-inside: avoid;
+  background: var(--bg2);
+  border: 1.5px solid var(--border);
+  border-radius: 18px;
+  overflow: hidden;
+  margin-bottom: 18px;
+  transition: transform .2s, box-shadow .2s;
+  cursor: pointer;
+}
+.post-card:hover { transform: translateY(-3px); box-shadow: 0 10px 36px rgba(124,58,237,.15); }
+
+.post-banner {
+  height: 130px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 52px;
+  position: relative;
+}
+.post-banner-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(to bottom, transparent 30%, rgba(255,255,255,.95));
+}
+
+.post-body { padding: 14px 16px; }
+.post-author-row {
+  display: flex; align-items: center; gap: 8px; margin-bottom: 8px;
+}
+.p-av {
+  width: 26px; height: 26px;
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--fh); font-weight: 800; font-size: 10px;
+  color: #fff; flex-shrink: 0;
+}
+.p-name { font-size: 12px; font-weight: 700; color: var(--ink2); }
+.p-time { font-size: 11px; color: var(--ink3); margin-left: auto; }
+.p-title {
+  font-family: var(--fh); font-weight: 800;
+  font-size: 16px; color: var(--ink);
+  line-height: 1.25; margin-bottom: 7px;
+}
+.p-excerpt { font-size: 13px; color: var(--ink2); line-height: 1.6; }
+.post-footer {
+  padding: 10px 16px 14px;
+  display: flex; align-items: center; gap: 10px;
+}
+.react-btn {
+  display: flex; align-items: center; gap: 5px;
+  font-size: 13px; font-weight: 700; color: var(--ink3);
+  background: var(--bg); border: 1.5px solid var(--border);
+  border-radius: 20px; padding: 4px 11px;
+  cursor: pointer; transition: all .15s;
+}
+.react-btn:hover { border-color: var(--pink); color: var(--pink); background: rgba(240,35,125,.06); }
+.react-btn.liked { border-color: var(--pink); color: var(--pink); background: rgba(240,35,125,.08); }
+
+/* ╔══════════════════════════════════════╗
+   ║  CHANNELS                            ║
+   ╚══════════════════════════════════════╝ */
+.channels-shell {
+  display: flex;
+  flex: 1;
+  height: calc(100vh - 60px);
+  overflow: hidden;
+}
+.ch-sidebar {
+  width: 220px;
+  background: var(--bg2);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  flex-shrink: 0;
+}
+.ch-sidebar-head {
+  padding: 16px 16px 10px;
+  border-bottom: 1px solid var(--border);
+}
+.ch-sidebar-head .csh-title {
+  font-family: var(--fh); font-weight: 800; font-size: 15px; color: var(--ink);
+}
+.ch-group-label {
+  font-size: 10px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 1.5px; color: var(--ink3);
+  padding: 12px 14px 6px;
+}
+.ch-row {
+  display: flex; align-items: center; gap: 9px;
+  padding: 9px 12px;
+  margin: 0 6px 2px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 13px; font-weight: 600; color: var(--ink2);
+  transition: background .15s, color .15s;
+}
+.ch-row:hover { background: var(--bg3); color: var(--ink); }
+.ch-row.active {
+  background: linear-gradient(135deg, rgba(124,58,237,.12), rgba(240,35,125,.08));
+  color: var(--violet);
+}
+.ch-icon {
+  width: 28px; height: 28px; border-radius: 8px;
+  background: var(--bg3);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; flex-shrink: 0;
+}
+.ch-row.active .ch-icon { background: var(--grad-a); }
+.ch-badge {
+  margin-left: auto; width: 8px; height: 8px;
+  background: var(--pink); border-radius: 50%;
+}
+
+.chat-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--bg);
+}
+.chat-topbar {
+  padding: 0 20px;
+  height: 56px;
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 12px;
+  flex-shrink: 0;
+}
+.chat-topbar .ct-name {
+  font-family: var(--fh); font-weight: 800; font-size: 16px; color: var(--ink);
+}
+.chat-topbar .ct-desc { font-size: 12px; color: var(--ink3); }
+.online-pill {
+  margin-left: auto;
+  display: flex; align-items: center; gap: 6px;
+  background: rgba(34,208,122,.1); border: 1px solid rgba(34,208,122,.2);
+  border-radius: 20px; padding: 4px 10px;
+  font-size: 12px; font-weight: 700; color: var(--lime);
+}
+.online-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--lime); animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+
+.chat-feed {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.chat-feed::-webkit-scrollbar { width: 4px; }
+.chat-feed::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+.chat-date-sep {
+  display: flex; align-items: center; gap: 12px;
+  margin: 12px 0;
+  font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--ink3);
+}
+.chat-date-sep::before, .chat-date-sep::after {
+  content: ''; flex: 1; height: 1px; background: var(--border);
+}
+
+.msg-block { display: flex; gap: 11px; margin-bottom: 10px; }
+.msg-av {
+  width: 34px; height: 34px; border-radius: 11px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--fh); font-weight: 800; font-size: 12px;
+  color: #fff; flex-shrink: 0; align-self: flex-start;
+}
+.msg-content {}
+.msg-meta {
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 3px;
+}
+.msg-author { font-size: 14px; font-weight: 700; color: var(--ink); }
+.msg-time { font-size: 11px; color: var(--ink3); }
+.role-pill {
+  font-size: 10px; font-weight: 700; padding: 1px 8px;
+  border-radius: 20px;
+}
+.rp-student { background: rgba(14,165,233,.12); color: var(--sky); }
+.rp-alumni  { background: rgba(124,58,237,.12); color: var(--violet); }
+.rp-admin   { background: rgba(240,35,125,.12); color: var(--pink); }
+.msg-text {
+  font-size: 14px; color: var(--ink2); line-height: 1.6;
+  background: var(--bg2);
+  padding: 9px 14px;
+  border-radius: 0 12px 12px 12px;
+  border: 1.5px solid var(--border);
+  display: inline-block;
+  max-width: 480px;
+}
+
+.chat-inputbar {
+  padding: 14px 20px;
+  background: var(--bg2);
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.chat-input-wrap {
+  display: flex; align-items: flex-end; gap: 8px;
+  background: var(--bg);
+  border: 1.5px solid var(--border);
+  border-radius: 14px;
+  padding: 8px 12px;
+  transition: border-color .15s, box-shadow .15s;
+}
+.chat-input-wrap:focus-within {
+  border-color: var(--violet);
+  box-shadow: 0 0 0 3px rgba(124,58,237,.1);
+}
+.ci-tools {
+  display: flex; gap: 2px;
+}
+.ci-tool-btn {
+  width: 30px; height: 30px; border-radius: 8px;
+  background: none; border: none;
+  color: var(--ink3); cursor: pointer; font-size: 15px;
+  display: flex; align-items: center; justify-content: center;
+  transition: background .15s, color .15s;
+}
+.ci-tool-btn:hover { background: var(--bg3); color: var(--ink2); }
+.ci-input {
+  flex: 1;
+  background: none; border: none; outline: none;
+  color: var(--ink); font-family: var(--fb); font-size: 14px;
+  resize: none; max-height: 100px; line-height: 1.5;
+}
+.ci-input::placeholder { color: var(--ink3); }
+.ci-send {
+  width: 34px; height: 34px;
+  background: var(--grad-a);
+  border: none; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; font-size: 16px;
+  transition: transform .1s, box-shadow .15s;
+  flex-shrink: 0;
+  box-shadow: 0 3px 12px rgba(124,58,237,.3);
+}
+.ci-send:hover { transform: scale(1.05); box-shadow: 0 4px 16px rgba(124,58,237,.4); }
+.ci-hint { font-size: 11px; color: var(--ink3); margin-top: 7px; padding-left: 2px; }
+
+/* ╔══════════════════════════════════════╗
+   ║  PROFILE                             ║
+   ╚══════════════════════════════════════╝ */
+.profile-shell { padding: 28px; flex: 1; }
+.profile-grid { display: grid; grid-template-columns: 300px 1fr; gap: 24px; align-items: start; }
+
+.profile-card {
+  background: var(--bg2);
+  border: 1.5px solid var(--border);
+  border-radius: 20px;
+  overflow: hidden;
+  position: sticky; top: 80px;
+}
+.p-banner {
+  height: 100px;
+  background: var(--grad-a);
+  position: relative;
+  overflow: hidden;
+}
+.p-banner-pattern {
+  position: absolute; inset: 0;
+  background-image: radial-gradient(rgba(255,255,255,.15) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+.p-banner-shapes {
+  position: absolute; inset: 0;
+}
+.p-banner-shapes span {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255,255,255,.1);
+}
+.p-info { padding: 0 20px 20px; }
+.p-avatar-wrap { margin-top: -28px; margin-bottom: 10px; }
+.p-avatar {
+  width: 56px; height: 56px;
+  border-radius: 16px;
+  background: var(--grad-a);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--fh); font-weight: 900; font-size: 20px;
+  color: #fff;
+  border: 4px solid var(--bg2);
+  box-shadow: 0 4px 16px rgba(124,58,237,.3);
+}
+.p-name { font-family: var(--fh); font-weight: 900; font-size: 22px; color: var(--ink); letter-spacing: -.5px; }
+.p-handle { font-size: 13px; color: var(--ink3); margin-bottom: 8px; }
+.p-bio { font-size: 13px; color: var(--ink2); line-height: 1.6; margin-bottom: 12px; }
+.p-meta-item { display: flex; align-items: center; gap: 7px; font-size: 12px; color: var(--ink3); margin-bottom: 5px; }
+.p-actions { margin-top: 14px; display: flex; gap: 8px; }
+
+.p-stats {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  border-top: 1.5px solid var(--border);
+  margin-top: 16px;
+}
+.p-stat { padding: 14px; text-align: center; }
+.p-stat:not(:last-child) { border-right: 1.5px solid var(--border); }
+.p-stat-num { font-family: var(--fh); font-weight: 900; font-size: 22px; color: var(--ink); }
+.p-stat-label { font-size: 10px; color: var(--ink3); font-weight: 600; text-transform: uppercase; letter-spacing: .8px; }
+
+/* TABS */
+.p-tabs { display: flex; gap: 4px; border-bottom: 1.5px solid var(--border); margin-bottom: 20px; }
+.p-tab {
+  padding: 10px 18px;
+  background: none; border: none;
+  border-bottom: 2.5px solid transparent;
+  font-family: var(--fh); font-size: 13px; font-weight: 700;
+  color: var(--ink3); cursor: pointer;
+  transition: color .15s, border-color .15s;
+  margin-bottom: -1.5px;
+}
+.p-tab:hover { color: var(--ink); }
+.p-tab.active { color: var(--violet); border-bottom-color: var(--violet); }
+.p-tab-panel { display: none; }
+.p-tab-panel.active { display: block; }
+
+.skill-list { display: flex; flex-direction: column; gap: 12px; }
+.skill-item {
+  background: var(--bg2); border: 1.5px solid var(--border);
+  border-radius: 14px; padding: 14px 16px;
+}
+.sk-row1 { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.sk-name { font-size: 14px; font-weight: 700; color: var(--ink); }
+.sk-pct { font-family: var(--fh); font-size: 13px; font-weight: 800; }
+.sk-bar { height: 6px; background: var(--bg3); border-radius: 6px; overflow: hidden; }
+.sk-fill { height: 100%; border-radius: 6px; transition: width 1s cubic-bezier(.4,0,.2,1); width: 0; }
+.sk-tag { font-size: 11px; color: var(--ink3); margin-top: 6px; }
+
+.ev-hist-list { display: flex; flex-direction: column; gap: 10px; }
+.ev-hist-card {
+  background: var(--bg2); border: 1.5px solid var(--border);
+  border-radius: 14px; padding: 14px 16px;
+  display: flex; align-items: center; gap: 14px;
+}
+.ev-hist-icon {
+  width: 42px; height: 42px; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; flex-shrink: 0;
+}
+.ev-hist-title { font-size: 14px; font-weight: 700; color: var(--ink); }
+.ev-hist-sub { font-size: 12px; color: var(--ink3); margin-top: 2px; }
+
+/* ╔══════════════════════════════════════╗
+   ║  AUTH                                ║
+   ╚══════════════════════════════════════╝ */
+.auth-overlay {
+  display: none; position: fixed; inset: 0; z-index: 9999;
+  background: var(--bg);
+  align-items: center; justify-content: center;
+  overflow: auto; padding: 20px;
+}
+.auth-overlay.show { display: flex; }
+.auth-wrap { display: grid; grid-template-columns: 1fr 420px; width: 100%; max-width: 860px; min-height: 540px; border-radius: 24px; overflow: hidden; box-shadow: 0 24px 80px rgba(124,58,237,.2); }
+@media(max-width:700px) { .auth-wrap { grid-template-columns: 1fr; } .auth-left { display: none; } }
+.auth-left {
+  background: var(--grad-a);
+  padding: 40px;
+  display: flex; flex-direction: column; justify-content: space-between;
+  position: relative; overflow: hidden;
+}
+.auth-left::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image: radial-gradient(rgba(255,255,255,.12) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+.auth-left .al-logo { font-family: var(--fh); font-weight: 900; font-size: 28px; color: #fff; position: relative; }
+.auth-left .al-tagline { font-family: var(--fh); font-weight: 800; font-size: 34px; color: #fff; line-height: 1.2; letter-spacing: -1px; position: relative; }
+.auth-left .al-sub { font-size: 14px; color: rgba(255,255,255,.7); position: relative; margin-top: 10px; }
+.auth-feat-list { display: flex; flex-direction: column; gap: 10px; position: relative; }
+.auth-feat { display: flex; align-items: center; gap: 10px; color: rgba(255,255,255,.85); font-size: 13px; font-weight: 600; }
+.auth-feat-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,.6); }
+
+.auth-right { background: var(--bg2); padding: 40px; display: flex; flex-direction: column; justify-content: center; }
+.auth-form-title { font-family: var(--fh); font-weight: 900; font-size: 26px; color: var(--ink); margin-bottom: 4px; }
+.auth-form-sub { font-size: 14px; color: var(--ink3); margin-bottom: 28px; }
+
+.f-group { margin-bottom: 16px; }
+.f-label {
+  display: block; font-size: 11px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 1px;
+  color: var(--ink3); margin-bottom: 6px;
+}
+.f-input, .f-select, .f-textarea {
+  width: 100%; background: var(--bg);
+  border: 1.5px solid var(--border);
+  border-radius: 10px; padding: 10px 14px;
+  color: var(--ink); font-family: var(--fb);
+  font-size: 14px; outline: none;
+  transition: border-color .15s, box-shadow .15s;
+}
+.f-input:focus, .f-select:focus, .f-textarea:focus {
+  border-color: var(--violet);
+  box-shadow: 0 0 0 3px rgba(124,58,237,.1);
+}
+.f-textarea { resize: vertical; min-height: 85px; }
+option { background: var(--bg2); }
+
+.auth-domain-note {
+  background: linear-gradient(135deg, rgba(124,58,237,.07), rgba(240,35,125,.04));
+  border: 1.5px solid rgba(124,58,237,.12);
+  border-radius: 10px;
+  padding: 10px 13px;
+  font-size: 12px; color: var(--ink2);
+  margin-top: 12px;
+}
+.auth-divider {
+  display: flex; align-items: center; gap: 12px;
+  margin: 18px 0; color: var(--ink3); font-size: 12px;
+}
+.auth-divider::before, .auth-divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+/* ╔══════════════════════════════════════╗
+   ║  NEW POST MODAL                      ║
+   ╚══════════════════════════════════════╝ */
+.modal-bg {
+  display: none; position: fixed; inset: 0; z-index: 5000;
+  background: rgba(18,21,46,.5);
+  backdrop-filter: blur(5px);
+  align-items: center; justify-content: center; padding: 20px;
+}
+.modal-bg.open { display: flex; }
+.modal-box {
+  background: var(--bg2);
+  border: 1.5px solid var(--border);
+  border-radius: 20px;
+  width: 100%; max-width: 560px;
+  padding: 28px;
+  animation: popIn .2s cubic-bezier(.4,0,.2,1);
+  max-height: 90vh;
+  overflow-y: auto;
+}
+@keyframes popIn {
+  from { opacity:0; transform: scale(.95) translateY(10px); }
+  to   { opacity:1; transform: scale(1) translateY(0); }
+}
+.modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 22px; }
+.modal-title { font-family: var(--fh); font-weight: 900; font-size: 22px; color: var(--ink); }
+.modal-close {
+  width: 32px; height: 32px; border-radius: 9px;
+  background: var(--bg3); border: none;
+  font-size: 17px; cursor: pointer; color: var(--ink2);
+  display: flex; align-items: center; justify-content: center;
+  transition: background .15s;
+}
+.modal-close:hover { background: rgba(240,35,125,.1); color: var(--pink); }
+
+.tag-picker { display: flex; flex-wrap: wrap; gap: 7px; }
+.tp-item {
+  padding: 5px 13px; border-radius: 20px;
+  border: 1.5px solid var(--border); background: var(--bg);
+  font-family: var(--fh); font-size: 12px; font-weight: 700;
+  color: var(--ink2); cursor: pointer;
+  transition: all .15s;
+}
+.tp-item:hover { border-color: var(--violet); color: var(--violet); }
+.tp-item.sel {
+  background: var(--violet);
+  border-color: var(--violet);
+  color: #fff;
+  box-shadow: 0 3px 10px rgba(124,58,237,.25);
+}
+
+.upload-zone {
+  border: 2px dashed var(--border);
+  border-radius: 12px; padding: 22px;
+  text-align: center; cursor: pointer;
+  transition: all .15s;
+  color: var(--ink3); font-size: 13px; font-weight: 600;
+}
+.upload-zone:hover { border-color: var(--violet); background: rgba(124,58,237,.03); color: var(--violet); }
+.upload-zone .uz-icon { font-size: 28px; margin-bottom: 6px; }
+
+/* TOASTS */
+.toast-stack {
+  position: fixed; bottom: 24px; right: 24px;
+  display: flex; flex-direction: column; gap: 8px; z-index: 9000;
+}
+.toast-item {
+  background: var(--bg2);
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  padding: 12px 16px;
+  min-width: 260px;
+  font-size: 13px; font-weight: 600;
+  color: var(--ink);
+  box-shadow: 0 6px 20px rgba(18,21,46,.12);
+  display: flex; align-items: center; gap: 10px;
+  animation: slideUp .25s ease;
+  border-left: 3px solid var(--lime);
+}
+.toast-item.err { border-left-color: var(--pink); }
+@keyframes slideUp { from { transform: translateY(12px); opacity:0; } to { transform: translateY(0); opacity:1; } }
+
+/* ╔══════════════════════════════════════╗
+   ║  SCROLLBAR                           ║
+   ╚══════════════════════════════════════╝ */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 5px; }
+
+/* RESPONSIVE */
+@media(max-width:900px) {
+  .sidebar { transform: translateX(-100%); box-shadow: none; }
+  .sidebar.open { transform: translateX(0); box-shadow: 8px 0 32px rgba(18,21,46,.15); }
+  .main { margin-left: 0; }
+  .menu-toggle { display: flex; }
+  .stats-strip { grid-template-columns: repeat(2,1fr); }
+  .home-grid { grid-template-columns: 1fr; }
+  .home-grid .widget:last-child { display: none; }
+  .profile-grid { grid-template-columns: 1fr; }
+  .profile-card { position: static; }
+  .ch-sidebar { display: none; }
+}
+
+.notif-shell { max-width: 680px; margin: 0 auto; padding: 24px 20px; }
+.notif-header { display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+.notif-card { display: flex; align-items: flex-start; gap: 14px; background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; cursor: pointer; transition: box-shadow .2s, transform .2s; }
+.notif-card:hover { box-shadow: var(--shadow2); transform: translateY(-1px); }
+.notif-unread { border-left: 3px solid var(--violet); background: rgba(124,58,237,.04); }
+.notif-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+.settings-shell { max-width: 640px; margin: 0 auto; padding: 24px 20px; }
+.settings-group { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 20px; overflow: hidden; }
+.sg-title { font-family: var(--fh); font-weight: 800; font-size: 14px; color: var(--ink); padding: 14px 18px; border-bottom: 1px solid var(--border); background: var(--bg3); }
+.sg-body { padding: 6px 0; }
+.setting-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 18px; gap: 20px; border-bottom: 1px solid var(--border); }
+.setting-row:last-child { border-bottom: none; }
+.sr-label { font-size: 14px; font-weight: 600; color: var(--ink); }
+.sr-sub { font-size: 12px; color: var(--ink3); margin-top: 2px; }
+.toggle { position: relative; display: inline-block; width: 44px; height: 24px; flex-shrink: 0; }
+.toggle input { opacity: 0; width: 0; height: 0; }
+.toggle-track { position: absolute; inset: 0; background: var(--border); border-radius: 99px; cursor: pointer; transition: background .25s; }
+.toggle-track::before { content: ''; position: absolute; width: 18px; height: 18px; left: 3px; top: 3px; background: #fff; border-radius: 50%; transition: transform .25s; box-shadow: 0 1px 4px rgba(0,0,0,.2); }
+.toggle input:checked + .toggle-track { background: var(--violet); }
+.toggle input:checked + .toggle-track::before { transform: translateX(20px); }
+</style>
+</head>
+<body>
+
+<!-- ╔══════════════════════════════════════╗
+     ║  AUTH                                ║
+     ╚══════════════════════════════════════╝ -->
+<div class="auth-overlay show" id="authOverlay">
+  <div class="auth-wrap">
+    <!-- Left branding -->
+    <div class="auth-left">
+      <div class="al-logo">⬡ MemoryWall</div>
+      <div>
+        <div class="al-tagline">Your college,<br/>remembered<br/>forever.</div>
+        <div class="al-sub">Share memories, discover events, grow together.</div>
+      </div>
+      <div class="auth-feat-list">
+        <div class="auth-feat"><span class="auth-feat-dot"></span>Post memories with photos & tags</div>
+        <div class="auth-feat"><span class="auth-feat-dot"></span>Live channels for students & alumni</div>
+        <div class="auth-feat"><span class="auth-feat-dot"></span>AI-powered event recommendations</div>
+        <div class="auth-feat"><span class="auth-feat-dot"></span>Skill suggestions based on your interests</div>
+      </div>
+    </div>
+    <!-- Right form -->
+    <div class="auth-right">
+      <div class="auth-form-title" id="authFormTitle">Welcome back 👋</div>
+      <div class="auth-form-sub" id="authFormSub">Sign in with your college email to continue.</div>
+
+      <!-- Register-only fields (hidden by default) -->
+      <div id="authRegFields" style="display:none">
+        <div class="f-group">
+          <label class="f-label">Full Name</label>
+          <input class="f-input" type="text" id="authName" placeholder="Rahul Kumar"/>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div class="f-group">
+            <label class="f-label">Branch</label>
+            <input class="f-input" type="text" id="authBranch" placeholder="CSE"/>
+          </div>
+          <div class="f-group">
+            <label class="f-label">Batch Year</label>
+            <input class="f-input" type="text" id="authBatch" placeholder="2025"/>
+          </div>
+        </div>
+      </div>
+
+      <div class="f-group">
+        <label class="f-label">College Email</label>
+        <input class="f-input" type="email" id="authEmail" placeholder="you@college.edu"/>
+      </div>
+      <div class="f-group">
+        <label class="f-label">Password</label>
+        <input class="f-input" type="password" id="authPass" placeholder="••••••••"/>
+      </div>
+      <button class="btn btn-grad" id="authSubmitBtn" style="width:100%;justify-content:center;font-size:15px;padding:12px;" onclick="doLogin()">
+        Sign In →
+      </button>
+      <div class="auth-domain-note">
+        🔒 Only <strong>@college.edu</strong> addresses are allowed.
+      </div>
+      <div class="auth-divider">or continue with</div>
+      <button class="btn btn-outline" style="width:100%;justify-content:center;" onclick="doLogin()">
+        🎓 Google (College SSO)
+      </button>
+      <p style="margin-top:14px;text-align:center;font-size:12px;color:var(--ink3);">
+        <span id="authToggleLink" style="color:var(--violet);cursor:pointer;font-weight:700;" onclick="toggleAuthMode()">New here? Create account →</span>
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- ╔══════════════════════════════════════╗
+     ║  APP                                 ║
+     ╚══════════════════════════════════════╝ -->
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-text">⬡ MemoryWall</div>
+      <div class="logo-sub">Class of 2025 · CSE</div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section">Main</div>
+      <div class="nav-item active" data-pg="home" onclick="nav('home',this)">
+        <div class="nav-icon">🏠</div> Home
+      </div>
+      <div class="nav-item" data-pg="wall" onclick="nav('wall',this)">
+        <div class="nav-icon">🧱</div> Memory Wall
+      </div>
+
+      <div class="nav-section">Channels</div>
+      <div class="nav-item" data-pg="channels" onclick="navChGroup('general','general',this)">
+        <div class="nav-icon">💬</div> General
+        <span class="nav-badge" id="nb-general" style="display:none">0</span>
+      </div>
+      <div class="nav-item" data-pg="channels" onclick="navChGroup('placements','placements',this)">
+        <div class="nav-icon">💼</div> Placements
+      </div>
+      <div class="nav-item" data-pg="channels" onclick="navChGroup('alumni','alumni-connect',this)">
+        <div class="nav-icon">🤝</div> Alumni Connect
+      </div>
+
+      <div class="nav-section">Account</div>
+      <div class="nav-item" data-pg="profile" onclick="nav('profile',this)">
+        <div class="nav-icon">👤</div> My Profile
+      </div>
+      <div class="nav-item" data-pg="notifications" onclick="nav('notifications',this)">
+        <div class="nav-icon">🔔</div> Notifications
+        <span class="nav-badge" id="nb-notifs" style="display:none">0</span>
+      </div>
+      <div class="nav-item" data-pg="settings" onclick="nav('settings',this)">
+        <div class="nav-icon">⚙️</div> Settings
+      </div>
+      <div class="nav-item" style="color:var(--coral)" onclick="doLogout()">
+        <div class="nav-icon">🚪</div> Sign Out
+      </div>
+    </nav>
+    <div class="sidebar-user" onclick="nav('profile', document.querySelector('[data-pg=profile]'))">
+      <div class="su-avatar">RK</div>
+      <div>
+        <div class="su-name">Rahul Kumar</div>
+        <div class="su-role">Student · CSE '25</div>
+      </div>
+      <div class="su-more">⋯</div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- TOPBAR -->
+    <div class="topbar">
+      <div class="topbar-left">
+        <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+        <span class="topbar-title" id="topbarTitle">Home</span>
+      </div>
+      <div class="topbar-right">
+        <button class="btn btn-outline" id="bellBtn" onclick="nav('notifications',document.querySelector('[data-pg=notifications]'))">🔔 <span id="bellCount" style="display:none;background:var(--coral);color:#fff;border-radius:99px;padding:1px 6px;font-size:11px;margin-left:2px">0</span></button>
+        <button class="btn btn-grad" onclick="openModal()">✏️ New Post</button>
+      </div>
+    </div>
+
+    <!-- ╔══════════════════════════════════╗
+         ║  HOME                            ║
+         ╚══════════════════════════════════╝ -->
+    <section class="page active" id="pg-home">
+      <!-- Hero -->
+      <div class="hero">
+        <div class="greeting-pill">
+          <div class="pill-dot">👋</div>
+          <span id="heroGreeting">Welcome back!</span>
+        </div>
+        <h1>Your College<br/><span class="grad-word">Memories</span> Live<br/>
+          <span class="grad-word2">Forever</span> Here.</h1>
+        <p class="hero-sub">Share experiences, connect with batchmates and alumni, and discover events made just for you.</p>
+        <div class="hero-cta">
+          <button class="btn btn-grad" onclick="openModal()">✏️ Share a Memory</button>
+          <button class="btn btn-outline" onclick="nav('wall', document.querySelector('[data-pg=wall]'))">Explore Wall →</button>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="stats-strip">
+        <div class="stat-tile st1">
+          <div class="st-glow"></div>
+          <div class="st-num" id="statPosts">—</div>
+          <div class="st-label">Memories Posted</div>
+        </div>
+        <div class="stat-tile st2">
+          <div class="st-glow"></div>
+          <div class="st-num" id="statStudents">—</div>
+          <div class="st-label">Active Students</div>
+        </div>
+        <div class="stat-tile st3">
+          <div class="st-glow"></div>
+          <div class="st-num" id="statAlumni">—</div>
+          <div class="st-label">Alumni Connected</div>
+        </div>
+        <div class="stat-tile st4">
+          <div class="st-glow"></div>
+          <div class="st-num" id="statEvents">—</div>
+          <div class="st-label">Events This Month</div>
+        </div>
+      </div>
+
+      <!-- Content grid -->
+      <div class="home-grid">
+        <div>
+          <div class="section-head">
+            <div class="section-title">🔥 Trending on the Wall</div>
+            <span class="see-all" onclick="nav('wall', document.querySelector('[data-pg=wall]'))">See all →</span>
+          </div>
+          <div class="activity-list" id="homeFeed"></div>
+        </div>
+        <div>
+          <div class="widget">
+            <div class="wg-title">📅 Upcoming Events</div>
+            <div id="upcomingEvents"></div>
+          </div>
+          <div class="widget">
+            <div class="wg-title">🎯 Recommended for You</div>
+            <p style="font-size:12px;color:var(--ink3);margin-bottom:10px;">
+              Based on your <span id="recTagLine">your recent activity</span>
+            </p>
+            <div id="homeRecs"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ╔══════════════════════════════════╗
+         ║  WALL                            ║
+         ╚══════════════════════════════════╝ -->
+    <section class="page" id="pg-wall">
+      <div class="wall-toolbar">
+        <input class="wall-search" type="text" id="wallQ" placeholder="Search memories, tags, people…" oninput="filterWall()"/>
+        <button class="filter-chip on" onclick="setFilter('all',this)">All</button>
+        <button class="filter-chip" onclick="setFilter('hackathon',this)">#hackathon</button>
+        <button class="filter-chip" onclick="setFilter('placement',this)">#placement</button>
+        <button class="filter-chip" onclick="setFilter('cultural',this)">#cultural</button>
+        <button class="filter-chip" onclick="setFilter('sports',this)">#sports</button>
+        <button class="filter-chip" onclick="setFilter('academic',this)">#academic</button>
+      </div>
+      <div class="wall-body">
+        <div class="wall-masonry" id="wallGrid"></div>
+      </div>
+    </section>
+
+    <!-- ╔══════════════════════════════════╗
+         ║  CHANNELS                        ║
+         ╚══════════════════════════════════╝ -->
+    <section class="page" id="pg-channels">
+      <div class="channels-shell">
+        <!-- Channel list -->
+        <div class="ch-sidebar">
+          <div class="ch-sidebar-head">
+            <div class="csh-title">Channels</div>
+          </div>
+          <div class="ch-group-label" data-group="general">General</div>
+          <div class="ch-row active" data-ch="general" data-group="general" onclick="switchCh('general',this)">
+            <div class="ch-icon">💬</div>general
+          </div>
+          <div class="ch-row" data-ch="events" data-group="general" onclick="switchCh('events',this)">
+            <div class="ch-icon">🎟️</div>events
+          </div>
+          <div class="ch-row" data-ch="fests" data-group="general" onclick="switchCh('fests',this)">
+            <div class="ch-icon">🎉</div>fests
+          </div>
+          <div class="ch-group-label" data-group="placements">Placements</div>
+          <div class="ch-row" data-ch="placements" data-group="placements" onclick="switchCh('placements',this)">
+            <div class="ch-icon">💼</div>placements
+          </div>
+          <div class="ch-group-label" data-group="alumni">Alumni Connect</div>
+          <div class="ch-row" data-ch="alumni-connect" data-group="alumni" onclick="switchCh('alumni-connect',this)">
+            <div class="ch-icon">🤝</div>alumni-connect
+          </div>
+          <div class="ch-row" data-ch="mentorship" data-group="alumni" onclick="switchCh('mentorship',this)">
+            <div class="ch-icon">🧑‍🏫</div>mentorship
+          </div>
+        </div>
+
+        <!-- Chat -->
+        <div class="chat-main">
+          <div class="chat-topbar">
+            <div>
+              <div class="ct-name" id="ctName">#general</div>
+              <div class="ct-desc" id="ctDesc">General student discussions</div>
+            </div>
+            <div class="online-pill">
+              <div class="online-dot"></div>
+              <span id="onlineCt">42 online</span>
+            </div>
+          </div>
+          <div class="chat-feed" id="chatFeed"></div>
+          <div class="chat-inputbar">
+            <!-- Firebase TODO: addDoc(collection(db,'channels',ch,'messages'),{...})
+                               onSnapshot listener will push new messages here -->
+            <div id="chatImgPreview" style="display:none;padding:8px 14px 0;"><img id="chatImgThumb" style="max-height:80px;border-radius:8px;border:1px solid var(--border)"/><button onclick="clearChatImg()" style="background:none;border:none;cursor:pointer;color:var(--coral);font-size:12px;margin-left:8px">✕ Remove</button></div>
+            <div class="chat-input-wrap">
+              <div class="ci-tools">
+                <label class="ci-tool-btn" title="Attach image" style="cursor:pointer">📎<input type="file" id="chatFileInput" accept="image/*,application/pdf" style="display:none" onchange="handleChatFile(this)"/></label>
+                <button class="ci-tool-btn" title="Emoji">😊</button>
+              </div>
+              <textarea class="ci-input" id="ciInput" rows="1"
+                placeholder="Message #general"
+                onkeydown="handleKey(event)"
+                oninput="autoH(this)"></textarea>
+              <button class="ci-send" onclick="sendMsg()">➤</button>
+            </div>
+            <p class="ci-hint">Press Enter to send, Shift+Enter for new line. Images up to 5MB supported.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ╔══════════════════════════════════╗
+         ║  PROFILE                         ║
+         ╚══════════════════════════════════╝ -->
+    <section class="page" id="pg-profile">
+      <div class="profile-shell">
+        <div class="profile-grid">
+          <!-- Profile card -->
+          <div class="profile-card">
+            <div class="p-banner">
+              <div class="p-banner-pattern"></div>
+              <div class="p-banner-shapes">
+                <span style="width:80px;height:80px;top:-20px;right:20px;"></span>
+                <span style="width:50px;height:50px;bottom:0;left:10px;"></span>
+                <span style="width:30px;height:30px;top:30px;left:40%;"></span>
+              </div>
+            </div>
+            <div class="p-info">
+              <div class="p-avatar-wrap">
+                <div class="p-avatar">RK</div>
+              </div>
+              <div class="p-name">Rahul Kumar</div>
+              <div class="p-handle">@rahulk · CSE · Batch 2025</div>
+              <div class="p-bio">Passionate about full-stack dev, competitive coding, and college events. Open to collaborations!</div>
+              <div id="profileTags" class="tag-row" style="margin-bottom:10px;margin-top:4px"></div>
+              <div class="p-meta-item">🏛️ XYZ Engineering College</div>
+              <div class="p-meta-item">📅 Joined August 2021</div>
+              <div class="p-meta-item">📍 Chennai, India</div>
+              <div class="tag-row" style="margin-top:12px;">
+                <span class="chip chip-v">#coding</span>
+                <span class="chip chip-g">#placement</span>
+                <span class="chip chip-a">#hackathon</span>
+                <span class="chip chip-s">#webdev</span>
+              </div>
+              <div class="p-actions">
+                <button class="btn btn-grad" style="flex:1;justify-content:center;font-size:13px;" onclick="openEditProfile()">✏️ Edit Profile</button>
+                <button class="btn btn-outline" style="font-size:13px;" onclick="showToast('🔗 Profile link copied!')">Share</button>
+              </div>
+            </div>
+            <div class="p-stats">
+              <div class="p-stat"><div class="p-stat-num" id="pStatPosts">—</div><div class="p-stat-label">Posts</div></div>
+              <div class="p-stat"><div class="p-stat-num" id="pStatLikes">—</div><div class="p-stat-label">Likes</div></div>
+              <div class="p-stat"><div class="p-stat-num" id="pStatEvents">—</div><div class="p-stat-label">Events</div></div>
+            </div>
+          </div>
+
+          <!-- Right -->
+          <div>
+            <div class="p-tabs">
+              <button class="p-tab active" onclick="pTab('posts',this)">Posts</button>
+              <button class="p-tab" onclick="pTab('skills',this)">Skills & Suggestions</button>
+              <button class="p-tab" onclick="pTab('events',this)">Event History</button>
+            </div>
+            <div class="p-tab-panel active" id="ptp-posts">
+              <div style="display:flex;flex-direction:column;gap:14px" id="profilePostsFeed"></div>
+            </div>
+            <div class="p-tab-panel" id="ptp-skills">
+              <p style="font-size:13px;color:var(--ink3);margin-bottom:16px;">
+                Personalized recommendations based on your tag activity.
+                <!-- Firebase TODO: cross-reference user tag-affinity map with /skills collection -->
+              </p>
+              <div class="skill-list" id="skillList"></div>
+            </div>
+            <div class="p-tab-panel" id="ptp-events">
+              <div class="ev-hist-list" id="evHistList"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <section class="page" id="pg-notifications">
+      <div class="notif-shell">
+        <div class="notif-header">
+          <div>
+            <div style="font-family:var(--fh);font-weight:900;font-size:22px;color:var(--ink)">Notifications</div>
+            <div style="font-size:13px;color:var(--ink3);margin-top:2px">Sorted by priority — important things first</div>
+          </div>
+          <div style="display:flex;gap:10px">
+            <button class="btn btn-outline" style="font-size:12px" onclick="doMarkAllRead()">✓ Mark all read</button>
+            <button class="btn btn-outline" style="font-size:12px;color:var(--coral)" onclick="doClearNotifs()">🗑 Clear all</button>
+          </div>
+        </div>
+        <div id="notifList" style="display:flex;flex-direction:column;gap:10px;margin-top:20px"></div>
+      </div>
+    </section>
+
+    <section class="page" id="pg-settings">
+      <div class="settings-shell">
+        <div style="font-family:var(--fh);font-weight:900;font-size:22px;color:var(--ink);margin-bottom:4px">Settings</div>
+        <div style="font-size:13px;color:var(--ink3);margin-bottom:28px">Manage your preferences and account configuration</div>
+
+        <div class="settings-group">
+          <div class="sg-title">🔔 Notification Preferences</div>
+          <div class="sg-body">
+            <div class="setting-row"><div><div class="sr-label">Likes & Claps on your posts</div><div class="sr-sub">Get notified when someone reacts to your memory</div></div><label class="toggle"><input type="checkbox" id="set-notifyLikes" onchange="saveSetting('notifyLikes',this.checked)"><span class="toggle-track"></span></label></div>
+            <div class="setting-row"><div><div class="sr-label">Upcoming events</div><div class="sr-sub">Reminders for events matching your tag interests</div></div><label class="toggle"><input type="checkbox" id="set-notifyEvents" onchange="saveSetting('notifyEvents',this.checked)"><span class="toggle-track"></span></label></div>
+            <div class="setting-row"><div><div class="sr-label">New posts on the wall</div><div class="sr-sub">Notify when others post new memories</div></div><label class="toggle"><input type="checkbox" id="set-notifyPosts" onchange="saveSetting('notifyPosts',this.checked)"><span class="toggle-track"></span></label></div>
+            <div class="setting-row"><div><div class="sr-label">Channel messages</div><div class="sr-sub">Notify when new messages are sent in channels</div></div><label class="toggle"><input type="checkbox" id="set-notifyMessages" onchange="saveSetting('notifyMessages',this.checked)"><span class="toggle-track"></span></label></div>
+          </div>
+        </div>
+
+        <div class="settings-group">
+          <div class="sg-title">🔒 Privacy</div>
+          <div class="sg-body">
+            <div class="setting-row"><div><div class="sr-label">Profile visibility</div><div class="sr-sub">Who can view your profile and posts</div></div><select class="f-select" id="set-privacy" onchange="saveSetting('privacy',this.value)" style="width:160px;padding:8px 12px;font-size:13px"><option value="everyone">Everyone</option><option value="students">Students only</option><option value="alumni">Alumni only</option></select></div>
+            <div class="setting-row"><div><div class="sr-label">Show in recommendations</div><div class="sr-sub">Allow your profile to appear in alumni mentor suggestions</div></div><label class="toggle"><input type="checkbox" id="set-showInRecs" onchange="saveSetting('showInRecs',this.checked)"><span class="toggle-track"></span></label></div>
+          </div>
+        </div>
+
+        <div class="settings-group">
+          <div class="sg-title">📧 Email Digest</div>
+          <div class="sg-body">
+            <div class="setting-row"><div><div class="sr-label">Email digest frequency</div><div class="sr-sub">How often to receive a summary of activity</div></div><select class="f-select" id="set-emailDigest" onchange="saveSetting('emailDigest',this.value)" style="width:160px;padding:8px 12px;font-size:13px"><option value="daily">Daily</option><option value="weekly">Weekly</option><option value="never">Never</option></select></div>
+          </div>
+        </div>
+
+        <div class="settings-group">
+          <div class="sg-title">🎨 Appearance</div>
+          <div class="sg-body">
+            <div class="setting-row"><div><div class="sr-label">Interface theme</div><div class="sr-sub">Light mode is currently active</div></div><select class="f-select" id="set-theme" onchange="saveSetting('theme',this.value)" style="width:160px;padding:8px 12px;font-size:13px"><option value="light">Light</option><option value="dark">Dark (coming soon)</option></select></div>
+            <div class="setting-row"><div><div class="sr-label">Compact wall layout</div><div class="sr-sub">Show more posts with less spacing</div></div><label class="toggle"><input type="checkbox" id="set-compact" onchange="saveSetting('compact',this.checked)"><span class="toggle-track"></span></label></div>
+          </div>
+        </div>
+
+        <div class="settings-group">
+          <div class="sg-title">🗑 Danger Zone</div>
+          <div class="sg-body">
+            <div class="setting-row"><div><div class="sr-label">Reset tag affinity</div><div class="sr-sub">Clear your interest profile and start fresh</div></div><button class="btn btn-outline" style="font-size:12px;color:var(--coral);border-color:var(--coral)" onclick="resetTagAffinity()">Reset</button></div>
+            <div class="setting-row"><div><div class="sr-label">Clear all notifications</div><div class="sr-sub">Remove all notification history</div></div><button class="btn btn-outline" style="font-size:12px;color:var(--coral);border-color:var(--coral)" onclick="doClearNotifs()">Clear</button></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- NEW POST MODAL -->
+<div class="modal-bg" id="modalBg" onclick="closeModalOutside(event)">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div class="modal-title">Share a Memory ✨</div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <!-- Firebase TODO: addDoc(collection(db,'posts'), {..., status:'pending', createdAt:serverTimestamp()}) -->
+    <div class="f-group">
+      <label class="f-label">Title</label>
+      <input class="f-input" type="text" id="mTitle" placeholder="Give your memory a headline…"/>
+    </div>
+    <div class="f-group">
+      <label class="f-label">Your Story</label>
+      <textarea class="f-textarea" id="mContent" placeholder="What happened? Tell us the full story…"></textarea>
+    </div>
+    <div class="f-group">
+      <label class="f-label">Category</label>
+      <select class="f-select" id="mCat">
+        <option value="">Select a category</option>
+        <option>Academic</option><option>Placement</option>
+        <option>Cultural Event</option><option>Hackathon</option>
+        <option>Sports</option><option>Alumni</option>
+      </select>
+    </div>
+    <div class="f-group">
+      <label class="f-label">Tags</label>
+      <div class="tag-picker" id="tagPicker"></div>
+    </div>
+    <div class="f-group">
+      <label class="f-label">Pick an Emoji</label>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+        <span id="mEmojiPreview" style="font-size:28px">📝</span>
+        <span style="font-size:12px;color:var(--ink3)">Represents your post</span>
+      </div>
+      <div id="emojiPicker" style="display:flex;flex-wrap:wrap;gap:4px"></div>
+    </div>
+    <div class="f-group">
+      <label class="f-label">Photo (optional)</label>
+      <div class="upload-zone" onclick="document.getElementById('postFileInput').click()" id="postUploadZone">
+        <div class="uz-icon" id="postUzIcon">📸</div>
+        <span id="postUzLabel">Click to upload an image or file (max 5MB)</span>
+        <input type="file" id="postFileInput" accept="image/*,application/pdf" style="display:none" onchange="handlePostFile(this)"/>
+      </div>
+      <div id="postImgPreview" style="display:none;margin-top:8px;"><img id="postImgThumb" style="max-height:120px;border-radius:8px;border:1px solid var(--border)"/><button onclick="clearPostImg()" style="background:none;border:none;cursor:pointer;color:var(--coral);font-size:12px;margin-left:8px">✕ Remove</button></div>
+    </div>
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:6px;">
+      <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-grad" onclick="submitPost()">🚀 Publish</button>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal-bg" id="editProfileBg" onclick="closeEditOutside(event)">
+  <div class="modal-box" style="max-width:480px">
+    <div class="modal-header">
+      <div class="modal-title">Edit Profile ✏️</div>
+      <button class="modal-close" onclick="closeEditProfile()">✕</button>
+    </div>
+    <div class="f-group">
+      <label class="f-label">Full Name</label>
+      <input class="f-input" type="text" id="ep-name" placeholder="Your full name"/>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div class="f-group">
+        <label class="f-label">Branch</label>
+        <input class="f-input" type="text" id="ep-branch" placeholder="CSE"/>
+      </div>
+      <div class="f-group">
+        <label class="f-label">Batch Year</label>
+        <input class="f-input" type="text" id="ep-batch" placeholder="2025"/>
+      </div>
+    </div>
+    <div class="f-group">
+      <label class="f-label">Bio</label>
+      <textarea class="f-textarea" id="ep-bio" placeholder="Tell the community about yourself…" style="height:80px"></textarea>
+    </div>
+    <div class="f-group">
+      <label class="f-label">Location</label>
+      <input class="f-input" type="text" id="ep-location" placeholder="Chennai, India"/>
+    </div>
+    <div class="f-group">
+      <label class="f-label">LinkedIn URL</label>
+      <input class="f-input" type="url" id="ep-linkedin" placeholder="https://linkedin.com/in/yourname"/>
+    </div>
+    <div class="f-group">
+      <label class="f-label">GitHub URL</label>
+      <input class="f-input" type="url" id="ep-github" placeholder="https://github.com/yourname"/>
+    </div>
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:6px">
+      <button class="btn btn-outline" onclick="closeEditProfile()">Cancel</button>
+      <button class="btn btn-grad" onclick="saveEditProfile()">💾 Save Changes</button>
+    </div>
+  </div>
+</div>
+<!-- TOASTS -->
+<div class="toast-stack" id="toastStack"></div>
+
+<!-- Load localStorage backend (swap this file for Firebase calls later) -->
+<script>
+const DB = (() => {
+
+  const uid = () => 'id_' + Math.random().toString(36).slice(2, 11);
+  const now = () => new Date().toISOString();
+  const relTime = iso => {
+    const diff = (Date.now() - new Date(iso)) / 1000;
+    if (diff < 60) return 'Just now';
+    if (diff < 3600) return Math.floor(diff / 60) + 'm ago';
+    if (diff < 86400) return Math.floor(diff / 3600) + 'h ago';
+    if (diff < 86400 * 2) return 'Yesterday';
+    if (diff < 86400 * 7) return Math.floor(diff / 86400) + 'd ago';
+    return new Date(iso).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
+  };
+
+  const ls = {
+    get: (key, fallback = null) => {
+      try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; } catch { return fallback; }
+    },
+    set: (key, val) => {
+      try { localStorage.setItem(key, JSON.stringify(val)); } catch (e) { console.error('Storage full?', e); }
+    },
+  };
+
+  const SEED = {
+    users: {
+      'user_rahul': {
+        uid: 'user_rahul', name: 'Rahul Kumar', email: 'rahul@college.edu',
+        initials: 'RK', role: 'student', branch: 'CSE', batch: '2025',
+        bio: 'Passionate about full-stack dev, competitive coding & events. Open to collaborations!',
+        location: 'Chennai, India', joinedAt: '2021-08-01T00:00:00.000Z', gradIndex: 0,
+        tagAffinity: { '#coding': 8, '#placement': 5, '#hackathon': 6, '#webdev': 4, '#research': 2 },
+        settings: { notifyLikes: true, notifyEvents: true, notifyPosts: true, notifyMessages: true, privacy: 'everyone', emailDigest: 'weekly', theme: 'light' },
+      },
+      'user_priya': {
+        uid: 'user_priya', name: 'Priya S.', email: 'priya@college.edu',
+        initials: 'PS', role: 'student', branch: 'ECE', batch: '2025',
+        bio: 'IoT enthusiast. Won TechExpo 2024.', location: 'Chennai, India',
+        joinedAt: '2021-08-01T00:00:00.000Z', gradIndex: 1,
+        tagAffinity: { '#hackathon': 9, '#coding': 6, '#research': 3 },
+        settings: { notifyLikes: true, notifyEvents: true, notifyPosts: false, notifyMessages: true, privacy: 'everyone', emailDigest: 'daily', theme: 'light' },
+      },
+      'user_arjun': {
+        uid: 'user_arjun', name: 'Arjun M.', email: 'arjun@college.edu',
+        initials: 'AM', role: 'student', branch: 'CSE', batch: '2025',
+        bio: 'Placed at Infosys. DSA grinder.', location: 'Bangalore, India',
+        joinedAt: '2021-08-01T00:00:00.000Z', gradIndex: 2,
+        tagAffinity: { '#placement': 10, '#coding': 8, '#academic': 3 },
+        settings: { notifyLikes: true, notifyEvents: true, notifyPosts: true, notifyMessages: false, privacy: 'everyone', emailDigest: 'never', theme: 'light' },
+      },
+      'user_admin': {
+        uid: 'user_admin', name: 'Admin', email: 'admin@college.edu',
+        initials: 'AD', role: 'admin', branch: '', batch: '',
+        bio: 'Platform admin.', location: 'Chennai, India',
+        joinedAt: '2020-01-01T00:00:00.000Z', gradIndex: 5,
+        tagAffinity: {},
+        settings: { notifyLikes: true, notifyEvents: true, notifyPosts: true, notifyMessages: true, privacy: 'everyone', emailDigest: 'daily', theme: 'light' },
+      },
+    },
+    posts: [
+      { id: 'post_1', title: 'Won Best Project at TechExpo! 🏆', content: 'Our IoT-based smart irrigation system won the college techfest. We used ESP32 sensors, Firebase Realtime DB for data streaming, and a React dashboard. Months of effort finally paid off!', tags: ['#hackathon', '#coding'], category: 'Hackathon', emoji: '🏆', gradIndex: 0, authorId: 'user_priya', authorName: 'Priya S.', authorInitials: 'PS', status: 'approved', createdAt: '2025-02-18T08:00:00.000Z', likes: ['user_arjun', 'user_admin'], claps: ['user_rahul'], imageUrl: null },
+      { id: 'post_2', title: 'Placed at Infosys — My Full Journey', content: 'After 8 mock interviews and 3 months of DSA grind, I cracked Infosys SP. Started with arrays/strings, moved to trees/graphs, then DP. Consistency over intensity — 2 hrs every day beats 8 hrs on weekends.', tags: ['#placement', '#coding'], category: 'Placement', emoji: '🎉', gradIndex: 1, authorId: 'user_arjun', authorName: 'Arjun M.', authorInitials: 'AM', status: 'approved', createdAt: '2025-02-18T05:00:00.000Z', likes: ['user_rahul', 'user_priya', 'user_admin'], claps: ['user_rahul', 'user_arjun'], imageUrl: null },
+      { id: 'post_3', title: 'Cultural Night was pure magic 🎭', content: 'The drama club\'s performance of "Echoes" was breathtaking. Three months of late-night rehearsals. Standing ovation, tears from the crowd — best night of college.', tags: ['#cultural', '#fests'], category: 'Cultural Event', emoji: '🎭', gradIndex: 2, authorId: 'user_priya', authorName: 'Priya S.', authorInitials: 'PS', status: 'approved', createdAt: '2025-02-17T12:00:00.000Z', likes: ['user_arjun'], claps: [], imageUrl: null },
+      { id: 'post_4', title: 'Inter-College Cricket Champions! 🏏', content: 'We won the finals in the last over! Needing 14 off the last 6 balls, our captain hit 2 sixes to seal it. The crowd noise was unreal — our entire batch was in the stands.', tags: ['#sports'], category: 'Sports', emoji: '🏏', gradIndex: 3, authorId: 'user_rahul', authorName: 'Rahul K.', authorInitials: 'RK', status: 'approved', createdAt: '2025-02-17T06:00:00.000Z', likes: ['user_priya', 'user_arjun', 'user_admin'], claps: ['user_priya', 'user_arjun'], imageUrl: null },
+      { id: 'post_5', title: 'My Paper Got Published in IEEE 📄', content: 'Six months of late nights in the ML lab paid off. My paper on LSTM-based traffic prediction got accepted to an IEEE conference. The reviewers called it a novel approach with strong empirical results.', tags: ['#academic', '#research', '#coding'], category: 'Academic', emoji: '📄', gradIndex: 4, authorId: 'user_arjun', authorName: 'Arjun M.', authorInitials: 'AM', status: 'approved', createdAt: '2025-02-16T09:00:00.000Z', likes: ['user_rahul', 'user_priya', 'user_admin'], claps: ['user_rahul', 'user_priya', 'user_admin'], imageUrl: null },
+      { id: 'post_6', title: 'Alumni Talk Completely Changed My Path', content: 'Met a Google L5 engineer at the Alumni Talk Series. He walked us through his journey — how he pivoted from backend Java to ML after college. Starting Andrew Ng\'s ML course tonight.', tags: ['#alumni', '#placement'], category: 'Alumni', emoji: '🤝', gradIndex: 5, authorId: 'user_rahul', authorName: 'Rahul K.', authorInitials: 'RK', status: 'approved', createdAt: '2025-02-15T14:00:00.000Z', likes: ['user_priya', 'user_admin'], claps: ['user_arjun'], imageUrl: null },
+    ],
+    channels: {
+      general: [
+        { id: 'msg_g1', text: 'Welcome to #general! Keep it positive, helpful and respectful. 🎓', authorId: 'user_admin', authorName: 'Admin', authorInitials: 'AD', role: 'admin', gradIndex: 5, createdAt: '2025-02-20T09:00:00.000Z', imageUrl: null },
+        { id: 'msg_g2', text: 'Hey everyone! Anyone attending the hackathon this Saturday? Looking for a team!', authorId: 'user_priya', authorName: 'Priya S.', authorInitials: 'PS', role: 'student', gradIndex: 1, createdAt: '2025-02-20T09:14:00.000Z', imageUrl: null },
+        { id: 'msg_g3', text: 'Yes! We have a team of 3 — need a designer. Reply here or DM me.', authorId: 'user_arjun', authorName: 'Arjun M.', authorInitials: 'AM', role: 'student', gradIndex: 2, createdAt: '2025-02-20T09:16:00.000Z', imageUrl: null },
+        { id: 'msg_g4', text: "Happy to mentor anyone prepping for placements. My LinkedIn is in my profile — feel free to connect 🙌", authorId: 'user_admin', authorName: "Dr. Mehta (Alumni 18)", authorInitials: 'DM', role: 'alumni', gradIndex: 3, createdAt: '2025-02-20T10:32:00.000Z', imageUrl: null },
+        { id: 'msg_g5', text: 'That is so kind! Connecting now.', authorId: 'user_rahul', authorName: 'Rahul K.', authorInitials: 'RK', role: 'student', gradIndex: 0, createdAt: '2025-02-20T10:45:00.000Z', imageUrl: null },
+        { id: 'msg_g6', text: 'Reminder: Library extended hours this week — open till 11 PM for exam prep. Make use of it!', authorId: 'user_admin', authorName: 'Admin', authorInitials: 'AD', role: 'admin', gradIndex: 5, createdAt: '2025-02-20T11:00:00.000Z', imageUrl: null },
+        { id: 'msg_g7', text: 'Does anyone know if the canteen is open on Sunday? Planning a group study session.', authorId: 'user_priya', authorName: 'Priya S.', authorInitials: 'PS', role: 'student', gradIndex: 1, createdAt: '2025-02-20T11:20:00.000Z', imageUrl: null },
+        { id: 'msg_g8', text: 'Yes it is open from 9 AM to 5 PM on Sundays. The north block canteen though, not the main one.', authorId: 'user_arjun', authorName: 'Arjun M.', authorInitials: 'AM', role: 'student', gradIndex: 2, createdAt: '2025-02-20T11:25:00.000Z', imageUrl: null },
+        { id: 'msg_g9', text: 'Anyone interested in forming a study group for the upcoming end semester exams? Drop your subjects below.', authorId: 'user_rahul', authorName: 'Rahul K.', authorInitials: 'RK', role: 'student', gradIndex: 0, createdAt: '2025-02-20T12:10:00.000Z', imageUrl: null },
+      ],
+      placements: [
+        { id: 'msg_p1', text: 'Placements season is officially open! Check the placement portal regularly for new drives. Best of luck everyone 💼', authorId: 'user_admin', authorName: 'Placement Cell', authorInitials: 'PC', role: 'admin', gradIndex: 5, createdAt: '2025-02-19T08:00:00.000Z', imageUrl: null },
+        { id: 'msg_p2', text: 'Infosys pool campus drive on March 10. Register on the careers portal before Feb 28. Package: 3.6 LPA.', authorId: 'user_arjun', authorName: 'Arjun M.', authorInitials: 'AM', role: 'student', gradIndex: 2, createdAt: '2025-02-19T09:00:00.000Z', imageUrl: null },
+        { id: 'msg_p3', text: 'Anyone have previous year TCS NQT aptitude questions? The new pattern is confusing me.', authorId: 'user_priya', authorName: 'Priya S.', authorInitials: 'PS', role: 'student', gradIndex: 1, createdAt: '2025-02-19T09:20:00.000Z', imageUrl: null },
+        { id: 'msg_p4', text: 'I have a compiled PDF covering TCS NQT 2022-24 patterns. Uploading to the shared drive — link coming shortly.', authorId: 'user_admin', authorName: 'Alumni Rohit', authorInitials: 'AR', role: 'alumni', gradIndex: 5, createdAt: '2025-02-19T10:00:00.000Z', imageUrl: null },
+        { id: 'msg_p5', text: 'Pro tip for Wipro NLTH: focus on the coding section — two medium-level problems in 60 minutes. They filter heavily on that.', authorId: 'user_arjun', authorName: 'Arjun M.', authorInitials: 'AM', role: 'student', gradIndex: 2, createdAt: '2025-02-19T11:30:00.000Z', imageUrl: null },
+        { id: 'msg_p6', text: 'Cognizant GenC Next is also opening soon. Higher package than regular GenC — worth applying separately.', authorId: 'user_rahul', authorName: 'Rahul K.', authorInitials: 'RK', role: 'student', gradIndex: 0, createdAt: '2025-02-20T08:00:00.000Z', imageUrl: null },
+        { id: 'msg_p7', text: 'Mock interview sessions every Saturday at 10 AM in seminar hall B — organized by the placement cell. Free for all students.', authorId: 'user_admin', authorName: 'Placement Cell', authorInitials: 'PC', role: 'admin', gradIndex: 5, createdAt: '2025-02-20T09:00:00.000Z', imageUrl: null },
+        { id: 'msg_p8', text: 'I cracked the Accenture ASE role last week. Happy to share my prep strategy if anyone is targeting it.', authorId: 'user_priya', authorName: 'Priya S.', authorInitials: 'PS', role: 'student', gradIndex: 1, createdAt: '2025-02-20T10:00:00.000Z', imageUrl: null },
+      ],
+      events: [
+        { id: 'msg_e1', text: 'Hackathon 2025 registrations are open! 24-hour coding sprint, prizes worth 50,000 rupees. Register by Feb 20.', authorId: 'user_admin', authorName: 'Admin', authorInitials: 'AD', role: 'admin', gradIndex: 5, createdAt: '2025-02-15T09:00:00.000Z', imageUrl: null },
+        { id: 'msg_e2', text: 'What are the allowed tech stacks for the hackathon? Can we use Flutter for the frontend?', authorId: 'user_rahul', authorName: 'Rahul K.', authorInitials: 'RK', role: 'student', gradIndex: 0, createdAt: '2025-02-15T09:30:00.000Z', imageUrl: null },
+        { id: 'msg_e3', text: 'All stacks are allowed — no restrictions on frameworks or languages. The theme will be revealed at the start of the event.', authorId: 'user_admin', authorName: 'Admin', authorInitials: 'AD', role: 'admin', gradIndex: 5, createdAt: '2025-02-15T10:00:00.000Z', imageUrl: null },
+        { id: 'msg_e4', text: 'Alumni Talk Series on Feb 28 — confirmed speakers from Google, Microsoft and a funded startup founder. Do not miss it.', authorId: 'user_admin', authorName: 'Admin', authorInitials: 'AD', role: 'admin', gradIndex: 5, createdAt: '2025-02-16T09:00:00.000Z', imageUrl: null },
+        { id: 'msg_e5', text: 'Is registration required for the Alumni Talk or can we just walk in?', authorId: 'user_priya', authorName: 'Priya S.', authorInitials: 'PS', role: 'student', gradIndex: 1, createdAt: '2025-02-16T09:45:00.000Z', imageUrl: null },
+        { id: 'msg_e6', text: 'Walk-in is fine but seating is limited to 200. Arriving by 2:30 PM is recommended.', authorId: 'user_admin', authorName: 'Admin', authorInitials: 'AD', role: 'admin', gradIndex: 5, createdAt: '2025-02-16T10:00:00.000Z', imageUrl: null },
+        { id: 'msg_e7', text: 'Open Source Sprint on March 12 — contribute to real GitHub repos, get certificates and goodies. Teams of 2 are allowed.', authorId: 'user_arjun', authorName: 'Arjun M.', authorInitials: 'AM', role: 'student', gradIndex: 2, createdAt: '2025-02-17T08:00:00.000Z', imageUrl: null },
+        { id: 'msg_e8', text: 'Industry Mentorship Day on March 20 is fully online this year. Calendar invites will go to all registered students.', authorId: 'user_admin', authorName: 'Admin', authorInitials: 'AD', role: 'admin', gradIndex: 5, createdAt: '2025-02-18T09:00:00.000Z', imageUrl: null },
+      ],
+      fests: [
+        { id: 'msg_f1', text: 'Cultural Fest 2025 is happening March 5-6! Two full days of music, dance, drama and art. Mark your calendars 🎭', authorId: 'user_admin', authorName: 'Admin', authorInitials: 'AD', role: 'admin', gradIndex: 5, createdAt: '2025-02-14T09:00:00.000Z', imageUrl: null },
+        { id: 'msg_f2', text: 'Volunteer registrations are open! We need coordinators for music, dance, drama, food stalls and logistics.', authorId: 'user_priya', authorName: 'Priya S.', authorInitials: 'PS', role: 'student', gradIndex: 1, createdAt: '2025-02-14T10:00:00.000Z', imageUrl: null },
+        { id: 'msg_f3', text: 'Registered for drama coordination! Super excited — we did this last year too and it was an amazing experience.', authorId: 'user_rahul', authorName: 'Rahul K.', authorInitials: 'RK', role: 'student', gradIndex: 0, createdAt: '2025-02-14T10:30:00.000Z', imageUrl: null },
+        { id: 'msg_f4', text: 'External college teams are also invited this year for music and dance competitions. Registrations close Feb 25.', authorId: 'user_admin', authorName: 'Admin', authorInitials: 'AD', role: 'admin', gradIndex: 5, createdAt: '2025-02-15T09:00:00.000Z', imageUrl: null },
+        { id: 'msg_f5', text: 'Is there a solo singing competition? I want to participate but could not find it on the poster.', authorId: 'user_arjun', authorName: 'Arjun M.', authorInitials: 'AM', role: 'student', gradIndex: 2, createdAt: '2025-02-15T11:00:00.000Z', imageUrl: null },
+        { id: 'msg_f6', text: 'Yes! Solo singing is on Day 1 at 4 PM in the open air theatre. Register through the fest app.', authorId: 'user_priya', authorName: 'Priya S.', authorInitials: 'PS', role: 'student', gradIndex: 1, createdAt: '2025-02-15T11:20:00.000Z', imageUrl: null },
+        { id: 'msg_f7', text: 'Sponsorship and stall bookings are still open for student entrepreneurs. Contact the fest committee before Feb 20.', authorId: 'user_admin', authorName: 'Admin', authorInitials: 'AD', role: 'admin', gradIndex: 5, createdAt: '2025-02-16T09:00:00.000Z', imageUrl: null },
+        { id: 'msg_f8', text: 'Theme for this year is Retro Rewind! All performances and decor should have a classic 80s-90s vibe. Get creative 🎶', authorId: 'user_priya', authorName: 'Priya S.', authorInitials: 'PS', role: 'student', gradIndex: 1, createdAt: '2025-02-17T10:00:00.000Z', imageUrl: null },
+      ],
+      'alumni-connect': [
+        { id: 'msg_a1', text: 'Welcome to #alumni-connect! This space is for alumni to share experiences and guide current students. 🤝', authorId: 'user_admin', authorName: 'Admin', authorInitials: 'AD', role: 'admin', gradIndex: 5, createdAt: '2025-02-10T08:00:00.000Z', imageUrl: null },
+        { id: 'msg_a2', text: 'Hello everyone! Class of 2022 here, currently at Amazon Bangalore. Happy to answer questions about FAANG prep or work culture.', authorId: 'user_admin', authorName: 'Neha R. (Alumni 22)', authorInitials: 'NR', role: 'alumni', gradIndex: 4, createdAt: '2025-02-10T09:00:00.000Z', imageUrl: null },
+        { id: 'msg_a3', text: 'That is amazing! What does the interview process look like at Amazon for freshers?', authorId: 'user_rahul', authorName: 'Rahul K.', authorInitials: 'RK', role: 'student', gradIndex: 0, createdAt: '2025-02-10T09:30:00.000Z', imageUrl: null },
+        { id: 'msg_a4', text: 'Two OAs, then two technical rounds focused on DSA, then a bar raiser round on leadership principles. Strong DSA is non-negotiable.', authorId: 'user_admin', authorName: 'Neha R. (Alumni 22)', authorInitials: 'NR', role: 'alumni', gradIndex: 4, createdAt: '2025-02-10T10:00:00.000Z', imageUrl: null },
+        { id: 'msg_a5', text: 'Class of 2020 here — currently engineering lead at a Series B startup. If anyone is curious about startup culture over big tech, feel free to ask.', authorId: 'user_admin', authorName: 'Karthik V. (Alumni 20)', authorInitials: 'KV', role: 'alumni', gradIndex: 3, createdAt: '2025-02-12T08:00:00.000Z', imageUrl: null },
+        { id: 'msg_a6', text: 'What is the biggest difference between college projects and real production code?', authorId: 'user_priya', authorName: 'Priya S.', authorInitials: 'PS', role: 'student', gradIndex: 1, createdAt: '2025-02-12T09:00:00.000Z', imageUrl: null },
+        { id: 'msg_a7', text: 'Scale, observability and ownership. In college you write code and forget it. At work you are on-call when it breaks at 3 AM. That changes everything.', authorId: 'user_admin', authorName: 'Karthik V. (Alumni 20)', authorInitials: 'KV', role: 'alumni', gradIndex: 3, createdAt: '2025-02-12T09:45:00.000Z', imageUrl: null },
+        { id: 'msg_a8', text: 'Alumni networking meet is being planned for March end on campus. Watch this space for the date announcement!', authorId: 'user_admin', authorName: 'Admin', authorInitials: 'AD', role: 'admin', gradIndex: 5, createdAt: '2025-02-15T08:00:00.000Z', imageUrl: null },
+      ],
+      mentorship: [
+        { id: 'msg_m1', text: 'Welcome to #mentorship! Connect with alumni who can guide your career path. 🧑‍🏫', authorId: 'user_admin', authorName: 'Admin', authorInitials: 'AD', role: 'admin', gradIndex: 5, createdAt: '2025-02-10T08:00:00.000Z', imageUrl: null },
+        { id: 'msg_m2', text: 'Looking for mentors in the ML/AI space. Currently doing Andrew Ng course but need guidance on what to build next.', authorId: 'user_rahul', authorName: 'Rahul K.', authorInitials: 'RK', role: 'student', gradIndex: 0, createdAt: '2025-02-10T09:00:00.000Z', imageUrl: null },
+        { id: 'msg_m3', text: 'I work in ML at Flipkart. After the course, build a project end-to-end: data collection, training, deployment. Deployed projects matter more than certificates.', authorId: 'user_admin', authorName: 'Divya S. (Alumni 21)', authorInitials: 'DS', role: 'alumni', gradIndex: 2, createdAt: '2025-02-10T10:00:00.000Z', imageUrl: null },
+        { id: 'msg_m4', text: 'Any mentors here who transitioned from core engineering to software? I am from mechanical but want to move into dev roles.', authorId: 'user_arjun', authorName: 'Arjun M.', authorInitials: 'AM', role: 'student', gradIndex: 2, createdAt: '2025-02-11T09:00:00.000Z', imageUrl: null },
+        { id: 'msg_m5', text: 'I made that exact transition! Mechanical 2019, now backend engineer at Zoho. Build projects and contribute to open source to compensate for the non-CS background.', authorId: 'user_admin', authorName: 'Suresh K. (Alumni 19)', authorInitials: 'SK', role: 'alumni', gradIndex: 4, createdAt: '2025-02-11T10:30:00.000Z', imageUrl: null },
+        { id: 'msg_m6', text: 'One-on-one mentorship slots are available every Friday 6-8 PM online. Seniors and alumni can sign up via the college portal.', authorId: 'user_admin', authorName: 'Admin', authorInitials: 'AD', role: 'admin', gradIndex: 5, createdAt: '2025-02-13T08:00:00.000Z', imageUrl: null },
+        { id: 'msg_m7', text: 'Is it realistic to prepare for GATE alongside placements? Looking for someone who has done both.', authorId: 'user_priya', authorName: 'Priya S.', authorInitials: 'PS', role: 'student', gradIndex: 1, createdAt: '2025-02-14T09:00:00.000Z', imageUrl: null },
+        { id: 'msg_m8', text: 'Absolutely doable. First 6 months focus on placements, then shift fully to GATE. I cleared both this way. Happy to share the full plan.', authorId: 'user_admin', authorName: 'Neha R. (Alumni 22)', authorInitials: 'NR', role: 'alumni', gradIndex: 4, createdAt: '2025-02-14T10:00:00.000Z', imageUrl: null },
+      ],
+    },
+    events: [
+      { id: 'ev_1', title: 'Hackathon 2025', day: '22', mon: 'Feb', sub: 'Tech Dept · 24 hrs', tags: ['#hackathon', '#coding'], registered: [] },
+      { id: 'ev_2', title: 'Alumni Talk Series', day: '28', mon: 'Feb', sub: 'Auditorium · 3 PM', tags: ['#career', '#placement'], registered: [] },
+      { id: 'ev_3', title: 'Cultural Fest', day: '05', mon: 'Mar', sub: 'Ground · 2 days', tags: ['#cultural', '#fests'], registered: [] },
+      { id: 'ev_4', title: 'Open Source Sprint', day: '12', mon: 'Mar', sub: 'Lab 3 · Weekend', tags: ['#coding', '#webdev'], registered: [] },
+      { id: 'ev_5', title: 'Industry Mentorship Day', day: '20', mon: 'Mar', sub: 'Online · 10 AM', tags: ['#placement', '#alumni'], registered: [] },
+    ],
+    skills: [
+      { id: 'sk_1', name: 'Data Structures & Algorithms', tags: ['#coding', '#placement'], grad: 'linear-gradient(90deg,#7c3aed,#9b59f7)', color: 'var(--violet)' },
+      { id: 'sk_2', name: 'System Design', tags: ['#placement', '#coding'], grad: 'linear-gradient(90deg,#f0237d,#ff6b9d)', color: 'var(--pink)' },
+      { id: 'sk_3', name: 'React / Frontend Dev', tags: ['#webdev', '#coding'], grad: 'linear-gradient(90deg,#0ea5e9,#38bdf8)', color: 'var(--sky)' },
+      { id: 'sk_4', name: 'Cloud Platforms (AWS/GCP)', tags: ['#placement', '#academic'], grad: 'linear-gradient(90deg,#ffa500,#ffc248)', color: 'var(--amber)' },
+      { id: 'sk_5', name: 'Machine Learning Basics', tags: ['#research', '#coding'], grad: 'linear-gradient(90deg,#22d07a,#4ade80)', color: 'var(--lime)' },
+      { id: 'sk_6', name: 'Public Speaking & Leadership', tags: ['#cultural', '#alumni'], grad: 'linear-gradient(90deg,#ff5c5c,#ff8080)', color: 'var(--coral)' },
+      { id: 'sk_7', name: 'Database Design (SQL/NoSQL)', tags: ['#coding', '#academic'], grad: 'linear-gradient(90deg,#4f46e5,#7c3aed)', color: 'var(--indigo)' },
+      { id: 'sk_8', name: 'Git & Version Control', tags: ['#coding', '#hackathon'], grad: 'linear-gradient(90deg,#f0237d,#7c3aed)', color: 'var(--pink)' },
+    ],
+    notifications: {
+      'user_rahul': [
+        { id: 'notif_1',  type: 'event',   priority: 1, title: 'Hackathon 2025 is tomorrow!',          body: 'You have not registered yet. It matches your #hackathon interest — register now!',           read: false, createdAt: '2025-02-21T08:00:00.000Z', link: 'home' },
+        { id: 'notif_2',  type: 'event',   priority: 1, title: 'Alumni Talk Series in 7 days',         body: 'Speakers from Google and Microsoft confirmed. Matches your #placement interest.',            read: false, createdAt: '2025-02-21T07:00:00.000Z', link: 'home' },
+        { id: 'notif_3',  type: 'event',   priority: 1, title: 'Placement registration deadline today', body: 'Infosys pool drive registration closes at midnight. Do not miss it.',                       read: false, createdAt: '2025-02-21T06:00:00.000Z', link: 'home' },
+        { id: 'notif_4',  type: 'event',   priority: 1, title: 'Open Source Sprint this weekend',      body: 'Matches your #coding and #webdev tags. Team registrations close tomorrow.',                  read: true,  createdAt: '2025-02-20T08:00:00.000Z', link: 'home' },
+        { id: 'notif_5',  type: 'like',    priority: 2, title: 'Priya S. liked your post',             body: '"Inter-College Cricket Champions!" got a new like.',                                         read: false, createdAt: '2025-02-20T14:30:00.000Z', link: 'wall' },
+        { id: 'notif_6',  type: 'like',    priority: 2, title: 'Arjun M. clapped your post',           body: '"Alumni Talk Completely Changed My Path" got a new clap.',                                   read: false, createdAt: '2025-02-20T11:00:00.000Z', link: 'wall' },
+        { id: 'notif_7',  type: 'like',    priority: 2, title: 'Admin liked your post',                body: '"Inter-College Cricket Champions!" now has 3 likes.',                                        read: true,  createdAt: '2025-02-19T16:00:00.000Z', link: 'wall' },
+        { id: 'notif_8',  type: 'message', priority: 2, title: 'New message in #placements',           body: 'Alumni Rohit shared a PDF resource for TCS NQT preparation.',                               read: false, createdAt: '2025-02-20T10:00:00.000Z', link: 'channels' },
+        { id: 'notif_9',  type: 'message', priority: 2, title: 'New message in #mentorship',           body: 'Divya S. replied to the ML/AI mentor request thread.',                                      read: true,  createdAt: '2025-02-19T10:30:00.000Z', link: 'channels' },
+        { id: 'notif_10', type: 'post',    priority: 3, title: 'New post in #placement',               body: 'Arjun M. shared "Placed at Infosys — My Full Journey".',                                    read: true,  createdAt: '2025-02-18T05:00:00.000Z', link: 'wall' },
+        { id: 'notif_11', type: 'post',    priority: 3, title: 'New post in #research',                body: 'Arjun M. shared "My Paper Got Published in IEEE".',                                          read: true,  createdAt: '2025-02-17T09:00:00.000Z', link: 'wall' },
+        { id: 'notif_12', type: 'post',    priority: 3, title: 'New post in #cultural',                body: 'Priya S. shared "Cultural Night was pure magic".',                                           read: true,  createdAt: '2025-02-17T12:00:00.000Z', link: 'wall' },
+        { id: 'notif_13', type: 'system',  priority: 3, title: 'Your profile is 60% complete',         body: 'Add your LinkedIn, GitHub and a bio to help alumni mentors find you.',                       read: false, createdAt: '2025-02-16T08:00:00.000Z', link: 'profile' },
+        { id: 'notif_14', type: 'system',  priority: 3, title: 'Weekly digest: 6 new memories posted', body: 'Catch up on what your batchmates have been up to this week.',                               read: true,  createdAt: '2025-02-15T09:00:00.000Z', link: 'wall' },
+      ],
+    },
+  };
+
+  function seed() {
+    const existingUsers = ls.get('mw_users', {});
+    const existingChannels = ls.get('mw_channels', {});
+    const channelKeys = Object.keys(existingChannels);
+    const allChannelsPresent = ['general','placements','events','fests','alumni-connect','mentorship'].every(c => channelKeys.includes(c) && existingChannels[c].length > 0);
+    const needsReseed = !ls.get('mw_seeded') || !existingUsers['user_rahul'] || !allChannelsPresent;
+    if (needsReseed) {
+      ls.set('mw_users', SEED.users);
+      ls.set('mw_posts', SEED.posts);
+      ls.set('mw_channels', SEED.channels);
+      ls.set('mw_events', SEED.events);
+      ls.set('mw_skills', SEED.skills);
+      ls.set('mw_notifications', SEED.notifications);
+      ls.set('mw_flagged', []);
+      ls.set('mw_seeded', true);
+    }
+  }
+
+  async function signIn(email, password) {
+    if (!email.endsWith('@college.edu')) throw new Error('Only @college.edu emails are allowed.');
+    const users = ls.get('mw_users', {});
+    const user = Object.values(users).find(u => u.email === email);
+    if (!user) throw new Error('No account found with this email. Please register first.');
+    if (password.length < 6) throw new Error('Password must be at least 6 characters.');
+    ls.set('mw_session', user.uid);
+    return { uid: user.uid, email: user.email, displayName: user.name };
+  }
+
+  async function register(email, password, name, branch, batch) {
+    if (!email.endsWith('@college.edu')) throw new Error('Only @college.edu emails are allowed.');
+    if (password.length < 6) throw new Error('Password must be at least 6 characters.');
+    const users = ls.get('mw_users', {});
+    if (Object.values(users).find(u => u.email === email)) throw new Error('Account already exists. Please sign in.');
+    const newUid = uid();
+    const initials = name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
+    const gradIndex = Math.floor(Math.random() * 6);
+    const newUser = {
+      uid: newUid, name, email, initials, role: 'student',
+      branch, batch, bio: '', location: '', gradIndex,
+      joinedAt: now(), tagAffinity: {},
+      settings: { notifyLikes: true, notifyEvents: true, notifyPosts: true, notifyMessages: true, privacy: 'everyone', emailDigest: 'weekly', theme: 'light' },
+    };
+    users[newUid] = newUser;
+    ls.set('mw_users', users);
+    ls.set('mw_session', newUid);
+    return { uid: newUid, email, displayName: name };
+  }
+
+  async function signOut() {
+    localStorage.removeItem('mw_session');
+  }
+
+  function currentUser() {
+    const id = ls.get('mw_session');
+    if (!id) return null;
+    const users = ls.get('mw_users', {});
+    return users[id] || null;
+  }
+
+  function onAuthChange(cb) {
+    cb(currentUser());
+    const interval = setInterval(() => cb(currentUser()), 500);
+    return () => clearInterval(interval);
+  }
+
+  async function getUser(userId) {
+    const users = ls.get('mw_users', {});
+    return users[userId] || null;
+  }
+
+  async function updateProfile(userId, updates) {
+    const users = ls.get('mw_users', {});
+    if (!users[userId]) throw new Error('User not found.');
+    users[userId] = { ...users[userId], ...updates };
+    ls.set('mw_users', users);
+    return users[userId];
+  }
+
+  async function updateSettings(userId, settingsUpdates) {
+    const users = ls.get('mw_users', {});
+    if (!users[userId]) throw new Error('User not found.');
+    users[userId].settings = { ...(users[userId].settings || {}), ...settingsUpdates };
+    ls.set('mw_users', users);
+    return users[userId].settings;
+  }
+
+  async function bumpTagAffinity(userId, tags, amount = 1) {
+    const users = ls.get('mw_users', {});
+    if (!users[userId]) return;
+    tags.forEach(tag => {
+      users[userId].tagAffinity[tag] = (users[userId].tagAffinity[tag] || 0) + amount;
+    });
+    ls.set('mw_users', users);
+  }
+
+  async function getPosts({ status = 'approved', limit = 30, authorId = null } = {}) {
+    let posts = ls.get('mw_posts', []);
+    if (status !== 'all') posts = posts.filter(p => p.status === status);
+    if (authorId) posts = posts.filter(p => p.authorId === authorId);
+    posts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    return posts.slice(0, limit).map(p => ({
+      ...p,
+      timeAgo: relTime(p.createdAt),
+      likeCount: p.likes.length,
+      clapCount: p.claps.length,
+      excerpt: p.content.slice(0, 160) + (p.content.length > 160 ? '…' : ''),
+    }));
+  }
+
+  async function createPost({ title, content, tags, category, emoji, authorId, imageUrl = null }) {
+    const user = await getUser(authorId);
+    if (!user) throw new Error('Not signed in.');
+    const BAD_WORDS = ['spam', 'abuse', 'hate'];
+    const combined = (title + ' ' + content).toLowerCase();
+    const isFlagged = BAD_WORDS.some(w => combined.includes(w));
+    const post = {
+      id: uid(), title: title.trim(), content: content.trim(),
+      tags, category, emoji: emoji || '📝', gradIndex: user.gradIndex,
+      authorId, authorName: user.name, authorInitials: user.initials,
+      status: isFlagged ? 'flagged' : 'approved',
+      createdAt: now(), likes: [], claps: [], imageUrl,
+    };
+    const posts = ls.get('mw_posts', []);
+    posts.unshift(post);
+    ls.set('mw_posts', posts);
+    await bumpTagAffinity(authorId, tags, 2);
+    if (isFlagged) {
+      const fl = ls.get('mw_flagged', []);
+      fl.push({ type: 'post', id: post.id, reason: 'keyword_match', flaggedBy: 'system', flaggedAt: now() });
+      ls.set('mw_flagged', fl);
+    }
+    return post.id;
+  }
+
+  async function toggleLike(postId, userId) {
+    const posts = ls.get('mw_posts', []);
+    const post = posts.find(p => p.id === postId);
+    if (!post) throw new Error('Post not found.');
+    const idx = post.likes.indexOf(userId);
+    if (idx === -1) {
+      post.likes.push(userId);
+      await bumpTagAffinity(userId, post.tags, 1);
+      if (userId !== post.authorId) {
+        await createNotification(post.authorId, {
+          type: 'like', priority: 2,
+          title: (await getUser(userId))?.name + ' liked your post',
+          body: '"' + post.title + '" got a new like.',
+          link: 'wall',
+        });
+      }
+    } else {
+      post.likes.splice(idx, 1);
+    }
+    ls.set('mw_posts', posts);
+    return { liked: idx === -1, count: post.likes.length };
+  }
+
+  async function toggleClap(postId, userId) {
+    const posts = ls.get('mw_posts', []);
+    const post = posts.find(p => p.id === postId);
+    if (!post) throw new Error('Post not found.');
+    const idx = post.claps.indexOf(userId);
+    if (idx === -1) {
+      post.claps.push(userId);
+      if (userId !== post.authorId) {
+        await createNotification(post.authorId, {
+          type: 'like', priority: 2,
+          title: (await getUser(userId))?.name + ' clapped your post',
+          body: '"' + post.title + '" got a new clap.',
+          link: 'wall',
+        });
+      }
+    } else {
+      post.claps.splice(idx, 1);
+    }
+    ls.set('mw_posts', posts);
+    return { clapped: idx === -1, count: post.claps.length };
+  }
+
+  async function moderatePost(postId, newStatus, adminId) {
+    const admin = await getUser(adminId);
+    if (!admin || admin.role !== 'admin') throw new Error('Unauthorized.');
+    const posts = ls.get('mw_posts', []);
+    const post = posts.find(p => p.id === postId);
+    if (!post) throw new Error('Post not found.');
+    post.status = newStatus;
+    ls.set('mw_posts', posts);
+    return true;
+  }
+
+  async function flagPost(postId, userId, reason) {
+    const flagged = ls.get('mw_flagged', []);
+    flagged.push({ type: 'post', id: postId, reason, flaggedBy: userId, flaggedAt: now() });
+    ls.set('mw_flagged', flagged);
+    const posts = ls.get('mw_posts', []);
+    const post = posts.find(p => p.id === postId);
+    if (post && post.status === 'approved') { post.status = 'under_review'; ls.set('mw_posts', posts); }
+  }
+
+  async function getModerationQueue(adminId) {
+    const admin = await getUser(adminId);
+    if (!admin || admin.role !== 'admin') throw new Error('Unauthorized.');
+    const posts = ls.get('mw_posts', []);
+    return posts.filter(p => ['pending_review', 'flagged', 'under_review'].includes(p.status));
+  }
+
+  async function getMessages(channelId) {
+    const channels = ls.get('mw_channels', {});
+    const msgs = channels[channelId] || [];
+    return msgs.map(m => ({
+      ...m,
+      timeFormatted: new Date(m.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+    }));
+  }
+
+  async function sendMessage(channelId, text, userId, imageUrl = null) {
+    const user = await getUser(userId);
+    if (!user) throw new Error('Not signed in.');
+    if (!text && !imageUrl) throw new Error('Cannot send empty message.');
+    const BAD_WORDS = ['spam', 'abuse', 'hate'];
+    if (text && BAD_WORDS.some(w => text.toLowerCase().includes(w))) throw new Error('Message flagged for review.');
+    const channels = ls.get('mw_channels', {});
+    if (!channels[channelId]) channels[channelId] = [];
+    const msg = {
+      id: uid(), text: text ? text.trim() : '',
+      authorId: userId, authorName: user.name, authorInitials: user.initials,
+      role: user.role, gradIndex: user.gradIndex, createdAt: now(), imageUrl,
+    };
+    channels[channelId].push(msg);
+    ls.set('mw_channels', channels);
+    const CH_TAGS = { placements: ['#placement'], technical: ['#coding'], fests: ['#cultural'], 'alumni-connect': ['#alumni'], mentorship: ['#placement'] };
+    if (CH_TAGS[channelId]?.length) await bumpTagAffinity(userId, CH_TAGS[channelId], 1);
+    return { ...msg, timeFormatted: new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) };
+  }
+
+  function subscribeToChannel(channelId, cb) {
+    let lastCount = 0;
+    const check = async () => {
+      const msgs = await getMessages(channelId);
+      if (msgs.length !== lastCount) { lastCount = msgs.length; cb(msgs); }
+    };
+    check();
+    const interval = setInterval(check, 2000);
+    return () => clearInterval(interval);
+  }
+
+  async function getEvents() {
+    return ls.get('mw_events', []);
+  }
+
+  async function registerForEvent(eventId, userId) {
+    const events = ls.get('mw_events', []);
+    const ev = events.find(e => e.id === eventId);
+    if (!ev) throw new Error('Event not found.');
+    if (ev.registered.includes(userId)) throw new Error('Already registered.');
+    ev.registered.push(userId);
+    ls.set('mw_events', events);
+    await bumpTagAffinity(userId, ev.tags, 3);
+    return true;
+  }
+
+  async function getEventRecommendations(userId) {
+    const [user, events] = await Promise.all([getUser(userId), getEvents()]);
+    if (!user) return [];
+    const affinity = user.tagAffinity || {};
+    const maxScore = Math.max(...Object.values(affinity), 1);
+    return events
+      .map(ev => {
+        const score = ev.tags.reduce((sum, tag) => sum + (affinity[tag] || 0), 0);
+        const pct = Math.min(Math.round((score / (maxScore * ev.tags.length)) * 100), 99);
+        return { ...ev, score, matchPct: pct || Math.floor(Math.random() * 30) + 10 };
+      })
+      .filter(ev => !ev.registered.includes(userId))
+      .sort((a, b) => b.score - a.score);
+  }
+
+  async function getSkillSuggestions(userId) {
+    const user = await getUser(userId);
+    if (!user) return [];
+    const affinity = user.tagAffinity || {};
+    const allSkills = ls.get('mw_skills', []);
+    return allSkills
+      .map(skill => {
+        const score = skill.tags.reduce((sum, tag) => sum + (affinity[tag] || 0), 0);
+        const totalAffinity = Object.values(affinity).reduce((a, b) => a + b, 0) || 1;
+        const level = Math.min(Math.max(Math.round((score / totalAffinity) * 120), 10), 90);
+        return { ...skill, score, level, suggestedVia: skill.tags.find(t => affinity[t]) || skill.tags[0] };
+      })
+      .filter(s => s.score > 0)
+      .sort((a, b) => b.score - a.score);
+  }
+
+  async function getStats() {
+    const posts = ls.get('mw_posts', []);
+    const users = ls.get('mw_users', {});
+    const userArr = Object.values(users);
+    return {
+      totalPosts: posts.filter(p => p.status === 'approved').length,
+      totalStudents: userArr.filter(u => u.role === 'student').length,
+      totalAlumni: userArr.filter(u => u.role === 'alumni').length,
+      totalEvents: (ls.get('mw_events', [])).length,
+    };
+  }
+
+  async function createNotification(userId, { type, priority, title, body, link }) {
+    const notifs = ls.get('mw_notifications', {});
+    if (!notifs[userId]) notifs[userId] = [];
+    notifs[userId].unshift({ id: uid(), type, priority, title, body, link, read: false, createdAt: now() });
+    if (notifs[userId].length > 50) notifs[userId] = notifs[userId].slice(0, 50);
+    ls.set('mw_notifications', notifs);
+  }
+
+  async function getNotifications(userId) {
+    const notifs = ls.get('mw_notifications', {});
+    const list = (notifs[userId] || []).sort((a, b) => {
+      if (a.priority !== b.priority) return a.priority - b.priority;
+      return new Date(b.createdAt) - new Date(a.createdAt);
+    });
+    return list.map(n => ({ ...n, timeAgo: relTime(n.createdAt) }));
+  }
+
+  async function markNotificationRead(userId, notifId) {
+    const notifs = ls.get('mw_notifications', {});
+    if (!notifs[userId]) return;
+    const n = notifs[userId].find(n => n.id === notifId);
+    if (n) { n.read = true; ls.set('mw_notifications', notifs); }
+  }
+
+  async function markAllRead(userId) {
+    const notifs = ls.get('mw_notifications', {});
+    if (!notifs[userId]) return;
+    notifs[userId].forEach(n => { n.read = true; });
+    ls.set('mw_notifications', notifs);
+  }
+
+  async function clearNotifications(userId) {
+    const notifs = ls.get('mw_notifications', {});
+    notifs[userId] = [];
+    ls.set('mw_notifications', notifs);
+  }
+
+  async function getUnreadCount(userId) {
+    const notifs = ls.get('mw_notifications', {});
+    return (notifs[userId] || []).filter(n => !n.read).length;
+  }
+
+  async function storeImageLocally(file) {
+    return new Promise((resolve, reject) => {
+      if (file.size > 5 * 1024 * 1024) { reject(new Error('File too large. Max 5MB.')); return; }
+      const reader = new FileReader();
+      reader.onload = e => resolve(e.target.result);
+      reader.onerror = () => reject(new Error('Failed to read file.'));
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function devReset() {
+    ['mw_users', 'mw_posts', 'mw_channels', 'mw_events', 'mw_skills', 'mw_flagged', 'mw_session', 'mw_seeded', 'mw_notifications']
+      .forEach(k => localStorage.removeItem(k));
+    seed();
+    console.log('DB reset to seed data.');
+  }
+
+  function devInspect(key) {
+    console.table(ls.get('mw_' + key));
+  }
+
+  seed();
+
+  return {
+    signIn, register, signOut, currentUser, onAuthChange,
+    getUser, updateProfile, updateSettings, bumpTagAffinity,
+    getPosts, createPost, toggleLike, toggleClap, flagPost,
+    moderatePost, getModerationQueue,
+    getMessages, sendMessage, subscribeToChannel,
+    getEvents, registerForEvent,
+    getEventRecommendations, getSkillSuggestions,
+    getStats,
+    createNotification, getNotifications, markNotificationRead, markAllRead, clearNotifications, getUnreadCount,
+    storeImageLocally,
+    devReset, devInspect, relTime,
+  };
+
+})();
+
+</script>
+<script>
+const GRADS = ['linear-gradient(135deg,#7c3aed,#f0237d)','linear-gradient(135deg,#0ea5e9,#22d07a)','linear-gradient(135deg,#ffa500,#ff5c5c)','linear-gradient(135deg,#4f46e5,#7c3aed)','linear-gradient(135deg,#f0237d,#ffa500)','linear-gradient(135deg,#22d07a,#0ea5e9)'];
+const ALL_TAGS = ['#coding','#placement','#hackathon','#cultural','#sports','#webdev','#design','#research','#club','#alumni','#fests','#academic'];
+const TAG_CHIP = {'#coding':'chip-s','#placement':'chip-g','#hackathon':'chip-v','#cultural':'chip-p','#sports':'chip-c','#webdev':'chip-s','#design':'chip-p','#research':'chip-g','#club':'chip-a','#alumni':'chip-a','#fests':'chip-a','#academic':'chip-s','#career':'chip-v'};
+const CH_DESCS = {general:'General student discussions',placements:'Placement prep & drives',events:'Upcoming event discussions',fests:'Fest planning & coordination','alumni-connect':'Connect with alumni',mentorship:'Find your mentor'};
+const EMOJI_MAP = {Academic:'📄',Placement:'🎉','Cultural Event':'🎭',Hackathon:'🏆',Sports:'🏏',Alumni:'🤝'};
+
+let ME = null;
+let currentFilter = 'all';
+let currentCh = 'general';
+let chUnsubscribe = null;
+let selectedPostImage = null;
+let selectedChatImage = null;
+
+const tagC = t => TAG_CHIP[t] || 'chip-v';
+const chipHTML = tags => tags.map(t => `<span class="chip ${tagC(t)}">${t}</span>`).join('');
+const grad = idx => GRADS[(idx||0) % GRADS.length];
+
+let authMode = 'login';
+function toggleAuthMode() {
+  authMode = authMode === 'login' ? 'register' : 'login';
+  const r = authMode === 'register';
+  document.getElementById('authFormTitle').textContent = r ? 'Create account 🎓' : 'Welcome back 👋';
+  document.getElementById('authFormSub').textContent = r ? 'Join your college community.' : 'Sign in with your college email to continue.';
+  document.getElementById('authRegFields').style.display = r ? 'block' : 'none';
+  document.getElementById('authSubmitBtn').textContent = r ? 'Create Account →' : 'Sign In →';
+  document.getElementById('authToggleLink').textContent = r ? 'Already have an account? Sign in →' : 'New here? Create account →';
+}
+
+function resetDemo() {
+  ['mw_users','mw_posts','mw_channels','mw_events','mw_skills','mw_flagged','mw_session','mw_seeded','mw_notifications']
+    .forEach(k => localStorage.removeItem(k));
+  DB.devReset();
+  showToast('✅ Demo data reset! Use rahul@college.edu / password123');
+}
+
+async function doLogin() {
+  const email = document.getElementById('authEmail').value.trim();
+  const pass = document.getElementById('authPass').value;
+  try {
+    if (authMode === 'register') {
+      const name = document.getElementById('authName').value.trim();
+      const branch = document.getElementById('authBranch').value.trim();
+      const batch = document.getElementById('authBatch').value.trim();
+      if (!name || !branch || !batch) { showToast('⚠️ Fill in all fields.', true); return; }
+      await DB.register(email, pass, name, branch, batch);
+      showToast('🎉 Account created!');
+    } else {
+      await DB.signIn(email, pass);
+      showToast('✅ Signed in!');
+    }
+    ME = DB.currentUser();
+    document.getElementById('authOverlay').classList.remove('show');
+    updateSidebarUser();
+    renderAll();
+  } catch (err) { showToast('❌ ' + err.message, true); }
+}
+
+async function doLogout() {
+  await DB.signOut();
+  ME = null;
+  if (chUnsubscribe) { chUnsubscribe(); chUnsubscribe = null; }
+  document.getElementById('authOverlay').classList.add('show');
+  showToast('👋 Signed out.');
+}
+
+function updateSidebarUser() {
+  if (!ME) return;
+  document.querySelector('.su-avatar').textContent = ME.initials;
+  document.querySelector('.su-name').textContent = ME.name;
+  document.querySelector('.su-role').textContent = `${ME.role === 'student' ? 'Student' : ME.role} · ${ME.branch} \'${ME.batch}`;
+  document.querySelector('.logo-sub').textContent = `Class of ${ME.batch} · ${ME.branch}`;
+}
+
+const TITLES = {home:'Home',wall:'Memory Wall',channels:'Channels',profile:'My Profile',notifications:'Notifications',settings:'Settings'};
+
+function nav(pgId, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('pg-' + pgId).classList.add('active');
+  if (el) el.classList.add('active');
+  document.getElementById('topbarTitle').textContent = TITLES[pgId] || pgId;
+  if (window.innerWidth <= 900) document.getElementById('sidebar').classList.remove('open');
+  if (pgId === 'home') renderHome();
+  if (pgId === 'wall') renderWall();
+  if (pgId === 'channels') initChat();
+  if (pgId === 'profile') renderProfile();
+  if (pgId === 'notifications') renderNotifications();
+  if (pgId === 'settings') renderSettings();
+}
+
+function navCh(ch, el) {
+  currentCh = ch;
+  nav('channels', el);
+}
+
+function navChGroup(group, defaultCh, el) {
+  currentCh = defaultCh;
+  filterChGroup(group);
+  nav('channels', el);
+}
+
+function filterChGroup(group) {
+  document.querySelectorAll('.ch-row, .ch-group-label').forEach(el => {
+    el.style.display = el.dataset.group === group ? '' : 'none';
+  });
+  // Auto-select first visible ch-row
+  const first = document.querySelector(`.ch-row[data-group="${group}"]`);
+  if (first) {
+    document.querySelectorAll('.ch-row').forEach(r => r.classList.remove('active'));
+    first.classList.add('active');
+    currentCh = first.dataset.ch;
+    document.getElementById('ctName').textContent = '#' + currentCh;
+    document.getElementById('ctDesc').textContent = CH_DESCS[currentCh] || '';
+    document.getElementById('ciInput').placeholder = 'Message #' + currentCh;
+    if (chUnsubscribe) chUnsubscribe();
+    chUnsubscribe = DB.subscribeToChannel(currentCh, msgs => renderMsgs(msgs));
+  }
+}
+
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+}
+
+async function renderAll() {
+  buildTagPicker();
+  await renderHome();
+  await renderWall();
+  initChat();
+  await renderProfile();
+  await updateNotifBadge();
+}
+
+async function updateNotifBadge() {
+  if (!ME) return;
+  const count = await DB.getUnreadCount(ME.uid);
+  const badge = document.getElementById('nb-notifs');
+  const bell = document.getElementById('bellCount');
+  if (count > 0) {
+    badge.textContent = count; badge.style.display = '';
+    bell.textContent = count; bell.style.display = '';
+  } else {
+    badge.style.display = 'none';
+    bell.style.display = 'none';
+  }
+}
+
+async function renderHome() {
+  const stats = await DB.getStats();
+  document.getElementById('statPosts').textContent = stats.totalPosts;
+  document.getElementById('statStudents').textContent = stats.totalStudents >= 1000 ? (stats.totalStudents/1000).toFixed(1)+'k' : stats.totalStudents;
+  document.getElementById('statAlumni').textContent = stats.totalAlumni;
+  document.getElementById('statEvents').textContent = stats.totalEvents;
+  if (ME) document.getElementById('heroGreeting').textContent = `Welcome back, ${ME.name.split(' ')[0]}!`;
+  const posts = await DB.getPosts({limit:4});
+  document.getElementById('homeFeed').innerHTML = posts.length
+    ? posts.map(p => `<div class="act-card" onclick="nav('wall',document.querySelector('[data-pg=wall]'))"><div class="act-av" style="background:${grad(p.gradIndex)}">${p.authorInitials}</div><div style="flex:1;min-width:0"><div class="act-title">${p.emoji} ${p.title}</div><div class="act-meta">${p.authorName} · ${p.timeAgo}</div><div class="act-excerpt">${p.excerpt.slice(0,90)}…</div><div class="tag-row">${chipHTML(p.tags)}</div></div></div>`).join('')
+    : '<p style="color:var(--ink3);font-size:13px">No posts yet. Be the first!</p>';
+  const events = await DB.getEvents();
+  document.getElementById('upcomingEvents').innerHTML = events.slice(0,3).map(e => `<div class="event-row"><div class="ev-cal"><div class="ev-day">${e.day}</div><div class="ev-mon">${e.mon}</div></div><div style="flex:1"><div class="ev-title">${e.title}</div><div class="ev-sub">${e.sub}</div><div class="tag-row" style="margin-top:5px">${chipHTML(e.tags)}</div></div><button class="btn btn-outline" style="font-size:11px;padding:5px 10px;flex-shrink:0" onclick="joinEvent('${e.id}',this)">Join</button></div>`).join('');
+  if (ME) {
+    const recs = await DB.getEventRecommendations(ME.uid);
+    const topTags = Object.entries(ME.tagAffinity||{}).sort((a,b)=>b[1]-a[1]).slice(0,2).map(e=>e[0]);
+    document.getElementById('recTagLine').innerHTML = topTags.length ? topTags.map(t=>`<strong style="color:var(--violet)">${t}</strong>`).join(' &amp; ')+' tags' : 'your recent activity';
+    document.getElementById('homeRecs').innerHTML = recs.slice(0,4).map(r=>`<div class="rec-row"><div class="rec-name">${r.title}</div><div class="rec-pct" style="color:${r.matchPct>70?'var(--lime)':r.matchPct>50?'var(--sky)':'var(--violet)'}">${r.matchPct}%</div></div>`).join('') || '<p style="font-size:12px;color:var(--ink3)">Interact with posts to get recommendations!</p>';
+  }
+}
+
+async function joinEvent(eventId, btn) {
+  if (!ME) return;
+  try {
+    await DB.registerForEvent(eventId, ME.uid);
+    btn.textContent = '✅ Joined'; btn.disabled = true;
+    showToast('🎉 Registered! Your interests have been updated.');
+    renderHome();
+  } catch(err) { showToast('ℹ️ ' + err.message); btn.textContent = '✅ Joined'; btn.disabled = true; }
+}
+
+async function renderWall(filter = currentFilter, q = '') {
+  const grid = document.getElementById('wallGrid');
+  grid.innerHTML = '<div style="text-align:center;padding:40px;color:var(--ink3)">Loading…</div>';
+  let posts = await DB.getPosts({limit:50});
+  if (filter !== 'all') posts = posts.filter(p => p.tags.includes('#'+filter));
+  if (q) posts = posts.filter(p => p.title.toLowerCase().includes(q) || p.excerpt.toLowerCase().includes(q));
+  if (!posts.length) { grid.innerHTML = '<div style="text-align:center;padding:60px;color:var(--ink3)">No posts found 🔍</div>'; return; }
+  const myLikes = new Set(posts.filter(p => p.likes.includes(ME?.uid)).map(p => p.id));
+  grid.innerHTML = posts.map(p => `<div class="post-card"><div class="post-banner" style="background:${grad(p.gradIndex)}22">${p.imageUrl ? `<img src="${p.imageUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:var(--radius) var(--radius) 0 0;position:absolute;top:0;left:0;opacity:.7">` : ''}<span style="position:relative;z-index:1;font-size:54px">${p.emoji}</span><div class="post-banner-overlay"></div></div><div class="post-body"><div class="post-author-row"><div class="p-av" style="background:${grad(p.gradIndex)}">${p.authorInitials}</div><span class="p-name">${p.authorName}</span><span class="p-time">${p.timeAgo}</span></div><div class="p-title">${p.title}</div><div class="p-excerpt">${p.excerpt}</div><div class="tag-row">${chipHTML(p.tags)}</div></div><div class="post-footer"><button class="react-btn ${myLikes.has(p.id)?'liked':''}" id="lb-${p.id}" onclick="doLike('${p.id}',this)">❤️ <span>${p.likeCount}</span></button><button class="react-btn" id="cb-${p.id}" onclick="doClap('${p.id}',this)">👏 <span>${p.clapCount}</span></button><button class="react-btn" style="margin-left:auto" onclick="showToast('🔗 Link copied!')">🔗</button><button class="react-btn" onclick="doFlag('${p.id}')" title="Report post">🚩</button></div></div>`).join('');
+}
+
+function filterWall() { renderWall(currentFilter, document.getElementById('wallQ').value.toLowerCase()); }
+function setFilter(f, el) { currentFilter = f; document.querySelectorAll('.filter-chip').forEach(c=>c.classList.remove('on')); el.classList.add('on'); filterWall(); }
+
+async function doLike(postId, btn) {
+  if (!ME) { showToast('⚠️ Sign in to like posts.', true); return; }
+  const result = await DB.toggleLike(postId, ME.uid);
+  btn.querySelector('span').textContent = result.count;
+  btn.classList.toggle('liked', result.liked);
+  await updateNotifBadge();
+  renderHome();
+}
+
+async function doClap(postId, btn) {
+  if (!ME) { showToast('⚠️ Sign in first.', true); return; }
+  const result = await DB.toggleClap(postId, ME.uid);
+  btn.querySelector('span').textContent = result.count;
+  await updateNotifBadge();
+}
+
+async function doFlag(postId) {
+  if (!ME) return;
+  await DB.flagPost(postId, ME.uid, 'user_report');
+  showToast('🚩 Post reported for review.');
+}
+
+function initChat() {
+  if (chUnsubscribe) chUnsubscribe();
+  chUnsubscribe = DB.subscribeToChannel(currentCh, msgs => renderMsgs(msgs));
+  document.getElementById('ctName').textContent = '#' + currentCh;
+  document.getElementById('ctDesc').textContent = CH_DESCS[currentCh] || '';
+  document.getElementById('ciInput').placeholder = `Message #${currentCh}`;
+  document.querySelectorAll('.ch-row').forEach(r => r.classList.remove('active'));
+  const activeRow = document.querySelector(`.ch-row[data-ch="${currentCh}"]`);
+  if (activeRow) activeRow.classList.add('active');
+  // Show only the group that owns currentCh
+  const ownerGroup = activeRow ? activeRow.dataset.group : 'general';
+  document.querySelectorAll('.ch-row, .ch-group-label').forEach(el => {
+    el.style.display = el.dataset.group === ownerGroup ? '' : 'none';
+  });
+}
+
+function renderMsgs(msgs) {
+  const feed = document.getElementById('chatFeed');
+  if (!msgs.length) { feed.innerHTML = `<div class="chat-date-sep">Today</div><p style="text-align:center;color:var(--ink3);font-size:13px;padding:30px 0">No messages yet — say hi! 👋</p>`; return; }
+  const wasAtBottom = feed.scrollHeight - feed.scrollTop - feed.clientHeight < 60;
+  let h = `<div class="chat-date-sep">Today</div>`;
+  msgs.forEach(m => {
+    const rp = m.role==='alumni'?'rp-alumni':m.role==='admin'?'rp-admin':'rp-student';
+    const rl = {alumni:'Alumni',admin:'Admin',student:'Student'}[m.role]||'Student';
+    const isMe = ME && m.authorId === ME.uid;
+    const imgHtml = m.imageUrl ? `<div style="margin-top:6px"><img src="${m.imageUrl}" style="max-width:240px;max-height:180px;border-radius:8px;border:1px solid var(--border);cursor:pointer" onclick="window.open('${m.imageUrl}','_blank')"/></div>` : '';
+    h += `<div class="msg-block" ${isMe?'style="flex-direction:row-reverse;text-align:right"':''}><div class="msg-av" style="background:${grad(m.gradIndex)}">${m.authorInitials}</div><div class="msg-content"><div class="msg-meta" ${isMe?'style="justify-content:flex-end"':''}><span class="msg-author">${isMe?'You':m.authorName}</span><span class="role-pill ${rp}">${rl}</span><span class="msg-time">${m.timeFormatted}</span></div>${m.text?`<div class="msg-text" ${isMe?'style="background:linear-gradient(135deg,rgba(124,58,237,.12),rgba(240,35,125,.08));border-color:rgba(124,58,237,.2)"':''}>${m.text}</div>`:''}${imgHtml}</div></div>`;
+  });
+  feed.innerHTML = h;
+  if (wasAtBottom) feed.scrollTop = feed.scrollHeight;
+}
+
+function switchCh(ch, el) {
+  currentCh = ch;
+  document.querySelectorAll('.ch-row').forEach(r => r.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('ctName').textContent = '#' + ch;
+  document.getElementById('ctDesc').textContent = CH_DESCS[ch] || '';
+  document.getElementById('ciInput').placeholder = `Message #${ch}`;
+  if (chUnsubscribe) chUnsubscribe();
+  chUnsubscribe = DB.subscribeToChannel(ch, msgs => renderMsgs(msgs));
+}
+
+async function handleChatFile(input) {
+  const file = input.files[0];
+  if (!file) return;
+  try {
+    showToast('⏳ Processing file…');
+    selectedChatImage = await DB.storeImageLocally(file);
+    document.getElementById('chatImgPreview').style.display = 'block';
+    document.getElementById('chatImgThumb').src = selectedChatImage;
+    showToast('✅ Image ready to send.');
+  } catch(e) { showToast('❌ ' + e.message, true); }
+}
+
+function clearChatImg() {
+  selectedChatImage = null;
+  document.getElementById('chatImgPreview').style.display = 'none';
+  document.getElementById('chatImgThumb').src = '';
+  document.getElementById('chatFileInput').value = '';
+}
+
+async function sendMsg() {
+  const el = document.getElementById('ciInput');
+  const text = el.value.trim();
+  if (!text && !selectedChatImage) return;
+  if (!ME) { showToast('⚠️ Sign in to chat.', true); return; }
+  try {
+    await DB.sendMessage(currentCh, text, ME.uid, selectedChatImage);
+    el.value = ''; el.style.height = 'auto';
+    clearChatImg();
+  } catch(err) { showToast('❌ ' + err.message, true); }
+}
+
+function handleKey(e) { if (e.key==='Enter' && !e.shiftKey) { e.preventDefault(); sendMsg(); } }
+function autoH(el) { el.style.height='auto'; el.style.height=Math.min(el.scrollHeight,100)+'px'; }
+
+async function renderProfile() {
+  if (!ME) return;
+  document.querySelector('.p-avatar').textContent = ME.initials;
+  document.querySelector('.p-name').textContent = ME.name;
+  document.querySelector('.p-handle').textContent = `@${ME.name.toLowerCase().replace(/\s/g,'')} · ${ME.branch} · Batch ${ME.batch}`;
+  document.querySelector('.p-bio').textContent = ME.bio || 'No bio yet — click Edit Profile to add one.';
+  const topTags = Object.entries(ME.tagAffinity||{}).sort((a,b)=>b[1]-a[1]).slice(0,4).map(e=>e[0]);
+  document.getElementById('profileTags').innerHTML = topTags.map(t=>`<span class="chip ${tagC(t)}">${t}</span>`).join('') || '<span style="color:var(--ink3);font-size:12px">Post memories to build your tag profile!</span>';
+  const myPosts = await DB.getPosts({authorId:ME.uid});
+  const totalLikes = myPosts.reduce((s,p)=>s+p.likeCount,0);
+  const myEvents = (await DB.getEvents()).filter(e=>e.registered.includes(ME.uid));
+  document.getElementById('pStatPosts').textContent = myPosts.length;
+  document.getElementById('pStatLikes').textContent = totalLikes;
+  document.getElementById('pStatEvents').textContent = myEvents.length;
+  document.getElementById('profilePostsFeed').innerHTML = myPosts.length
+    ? myPosts.map(p=>`<div class="act-card" style="cursor:default"><div class="act-av" style="background:${grad(p.gradIndex)}">${p.authorInitials}</div><div style="flex:1;min-width:0"><div class="act-title">${p.emoji} ${p.title}</div><div class="act-meta">${p.timeAgo} · ${p.likeCount} ❤️ · ${p.clapCount} 👏</div><div class="act-excerpt">${p.excerpt}</div><div class="tag-row">${chipHTML(p.tags)}</div></div></div>`).join('')
+    : '<p style="color:var(--ink3);font-size:13px">You have not posted anything yet.</p>';
+  const skills = await DB.getSkillSuggestions(ME.uid);
+  document.getElementById('skillList').innerHTML = skills.length
+    ? skills.map(s=>`<div class="skill-item"><div class="sk-row1"><span class="sk-name">${s.name}</span><span class="sk-pct" style="color:${s.color}">${s.level}%</span></div><div class="sk-bar"><div class="sk-fill" data-w="${s.level}" style="background:${s.grad};width:0%"></div></div><div class="sk-tag">📌 Suggested via ${s.suggestedVia} activity</div></div>`).join('')
+    : '<p style="color:var(--ink3);font-size:13px">Like posts and join events to get personalized skill suggestions!</p>';
+  requestAnimationFrame(() => { document.querySelectorAll('.sk-fill').forEach(el=>{ el.style.width=el.dataset.w+'%'; }); });
+  document.getElementById('evHistList').innerHTML = myEvents.length
+    ? myEvents.map(e=>`<div class="ev-hist-card"><div class="ev-hist-icon" style="background:${GRADS[0]}">${e.title[0]}</div><div><div class="ev-hist-title">${e.title}</div><div class="ev-hist-sub">${e.sub}</div></div><div class="tag-row">${chipHTML(e.tags)}</div></div>`).join('')
+    : '<p style="color:var(--ink3);font-size:13px">Join events from the home page to see them here.</p>';
+}
+
+function pTab(id, btn) {
+  document.querySelectorAll('.p-tab').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.p-tab-panel').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('ptp-'+id).classList.add('active');
+  if (id==='skills') requestAnimationFrame(()=>{ document.querySelectorAll('.sk-fill').forEach(el=>{ el.style.width='0%'; requestAnimationFrame(()=>{ el.style.width=el.dataset.w+'%'; }); }); });
+}
+
+function openEditProfile() {
+  if (!ME) return;
+  document.getElementById('ep-name').value = ME.name || '';
+  document.getElementById('ep-branch').value = ME.branch || '';
+  document.getElementById('ep-batch').value = ME.batch || '';
+  document.getElementById('ep-bio').value = ME.bio || '';
+  document.getElementById('ep-location').value = ME.location || '';
+  document.getElementById('ep-linkedin').value = ME.linkedin || '';
+  document.getElementById('ep-github').value = ME.github || '';
+  document.getElementById('editProfileBg').classList.add('open');
+}
+function closeEditProfile() { document.getElementById('editProfileBg').classList.remove('open'); }
+function closeEditOutside(e) { if (e.target===document.getElementById('editProfileBg')) closeEditProfile(); }
+
+async function saveEditProfile() {
+  const name = document.getElementById('ep-name').value.trim();
+  if (!name) { showToast('⚠️ Name cannot be empty.', true); return; }
+  const updates = {
+    name,
+    branch: document.getElementById('ep-branch').value.trim(),
+    batch: document.getElementById('ep-batch').value.trim(),
+    bio: document.getElementById('ep-bio').value.trim(),
+    location: document.getElementById('ep-location').value.trim(),
+    linkedin: document.getElementById('ep-linkedin').value.trim(),
+    github: document.getElementById('ep-github').value.trim(),
+    initials: name.split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase(),
+  };
+  await DB.updateProfile(ME.uid, updates);
+  ME = DB.currentUser();
+  closeEditProfile();
+  updateSidebarUser();
+  await renderProfile();
+  showToast('✅ Profile updated!');
+}
+
+async function renderNotifications() {
+  if (!ME) return;
+  await DB.markAllRead(ME.uid);
+  await updateNotifBadge();
+  const notifs = await DB.getNotifications(ME.uid);
+  const ICONS = {event:'📅',like:'❤️',clap:'👏',post:'📝',message:'💬',system:'🔔'};
+  const PRIORITY_LABELS = {1:'High Priority',2:'Medium Priority',3:'Low Priority'};
+  const PRIORITY_COLORS = {1:'var(--coral)',2:'var(--amber)',3:'var(--ink3)'};
+  if (!notifs.length) {
+    document.getElementById('notifList').innerHTML = '<div style="text-align:center;padding:60px;color:var(--ink3)">No notifications yet 🔔</div>';
+    return;
+  }
+  let lastPriority = null;
+  let html = '';
+  notifs.forEach(n => {
+    if (n.priority !== lastPriority) {
+      html += `<div style="font-size:11px;font-weight:700;letter-spacing:.06em;color:${PRIORITY_COLORS[n.priority]||'var(--ink3)'};text-transform:uppercase;padding:4px 0;margin-top:${lastPriority?'16px':'0'}">${PRIORITY_LABELS[n.priority]||'Notifications'}</div>`;
+      lastPriority = n.priority;
+    }
+    html += `<div class="notif-card ${n.read?'':'notif-unread'}" onclick="notifClick('${n.id}','${n.link||'home'}')">
+      <div class="notif-icon" style="background:${n.type==='event'?'linear-gradient(135deg,#7c3aed,#f0237d)':n.type==='like'||n.type==='clap'?'linear-gradient(135deg,#ff5c5c,#ffa500)':'linear-gradient(135deg,#0ea5e9,#22d07a)'}">${ICONS[n.type]||'🔔'}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-weight:700;font-size:14px;color:var(--ink)">${n.title}</div>
+        <div style="font-size:12px;color:var(--ink2);margin-top:2px">${n.body}</div>
+        <div style="font-size:11px;color:var(--ink3);margin-top:4px">${n.timeAgo}</div>
+      </div>
+      ${!n.read?'<div style="width:8px;height:8px;border-radius:99px;background:var(--violet);flex-shrink:0;margin-top:4px"></div>':''}
+    </div>`;
+  });
+  document.getElementById('notifList').innerHTML = html;
+}
+
+async function notifClick(notifId, link) {
+  if (ME) await DB.markNotificationRead(ME.uid, notifId);
+  await updateNotifBadge();
+  const pg = document.querySelector(`[data-pg="${link}"]`);
+  nav(link, pg);
+}
+
+async function doMarkAllRead() {
+  if (!ME) return;
+  await DB.markAllRead(ME.uid);
+  await updateNotifBadge();
+  await renderNotifications();
+  showToast('✅ All notifications marked as read.');
+}
+
+async function doClearNotifs() {
+  if (!ME) return;
+  await DB.clearNotifications(ME.uid);
+  await updateNotifBadge();
+  await renderNotifications();
+  showToast('🗑 Notifications cleared.');
+}
+
+async function renderSettings() {
+  if (!ME) return;
+  const s = ME.settings || {};
+  const set = (id, val) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (el.type === 'checkbox') el.checked = !!val;
+    else el.value = val || '';
+  };
+  set('set-notifyLikes', s.notifyLikes !== false);
+  set('set-notifyEvents', s.notifyEvents !== false);
+  set('set-notifyPosts', s.notifyPosts !== false);
+  set('set-notifyMessages', s.notifyMessages !== false);
+  set('set-privacy', s.privacy || 'everyone');
+  set('set-showInRecs', s.showInRecs !== false);
+  set('set-emailDigest', s.emailDigest || 'weekly');
+  set('set-theme', s.theme || 'light');
+  set('set-compact', !!s.compact);
+}
+
+async function saveSetting(key, value) {
+  if (!ME) return;
+  await DB.updateSettings(ME.uid, {[key]: value});
+  ME = DB.currentUser();
+  showToast('✅ Setting saved.');
+}
+
+async function resetTagAffinity() {
+  if (!ME) return;
+  await DB.updateProfile(ME.uid, {tagAffinity:{}});
+  ME = DB.currentUser();
+  showToast('✅ Tag interest profile reset.');
+  await renderProfile();
+}
+
+const EMOJI_OPTIONS = ['📝','🏆','🎉','🎭','🏏','📄','🤝','💡','🚀','🎓','🔥','⚡'];
+let selectedEmoji = '📝';
+
+function openModal() {
+  document.getElementById('modalBg').classList.add('open');
+  document.getElementById('emojiPicker').innerHTML = EMOJI_OPTIONS.map(e=>`<span style="font-size:22px;cursor:pointer;padding:4px;border-radius:7px;transition:background .15s" onclick="pickEmoji('${e}',this)">${e}</span>`).join('');
+}
+function pickEmoji(e, el) {
+  selectedEmoji = e;
+  document.querySelectorAll('#emojiPicker span').forEach(s=>s.style.background='');
+  el.style.background='rgba(124,58,237,.15)';
+  document.getElementById('mEmojiPreview').textContent = e;
+}
+function closeModal() { document.getElementById('modalBg').classList.remove('open'); }
+function closeModalOutside(ev) { if(ev.target===document.getElementById('modalBg')) closeModal(); }
+function buildTagPicker() { document.getElementById('tagPicker').innerHTML = ALL_TAGS.map(t=>`<span class="tp-item" onclick="this.classList.toggle('sel')">${t}</span>`).join(''); }
+
+async function handlePostFile(input) {
+  const file = input.files[0];
+  if (!file) return;
+  try {
+    showToast('⏳ Processing file…');
+    selectedPostImage = await DB.storeImageLocally(file);
+    document.getElementById('postImgPreview').style.display = 'block';
+    document.getElementById('postImgThumb').src = selectedPostImage;
+    document.getElementById('postUzLabel').textContent = '✅ ' + file.name + ' ready';
+    showToast('✅ File attached.');
+  } catch(e) { showToast('❌ ' + e.message, true); }
+}
+
+function clearPostImg() {
+  selectedPostImage = null;
+  document.getElementById('postImgPreview').style.display = 'none';
+  document.getElementById('postImgThumb').src = '';
+  document.getElementById('postFileInput').value = '';
+  document.getElementById('postUzLabel').textContent = 'Click to upload an image or file (max 5MB)';
+}
+
+async function submitPost() {
+  if (!ME) { showToast('⚠️ Sign in first!', true); return; }
+  const title = document.getElementById('mTitle').value.trim();
+  const content = document.getElementById('mContent').value.trim();
+  const cat = document.getElementById('mCat').value;
+  if (!title || !content) { showToast('⚠️ Fill in title and story!', true); return; }
+  const tags = [...document.querySelectorAll('.tp-item.sel')].map(el=>el.textContent);
+  const emoji = selectedEmoji || EMOJI_MAP[cat] || '📝';
+  try {
+    await DB.createPost({title, content, tags: tags.length?tags:['#academic'], category:cat, emoji, authorId:ME.uid, imageUrl:selectedPostImage});
+    closeModal();
+    document.getElementById('mTitle').value = '';
+    document.getElementById('mContent').value = '';
+    document.querySelectorAll('.tp-item.sel').forEach(el=>el.classList.remove('sel'));
+    selectedEmoji = '📝'; selectedPostImage = null;
+    document.getElementById('postImgPreview').style.display = 'none';
+    document.getElementById('postUzLabel').textContent = 'Click to upload an image or file (max 5MB)';
+    ME = DB.currentUser();
+    await renderWall(); await renderHome();
+    showToast('🎉 Memory submitted for review!');
+  } catch(err) { showToast('❌ ' + err.message, true); }
+}
+
+function showToast(msg, err=false) {
+  const stack = document.getElementById('toastStack');
+  const t = document.createElement('div');
+  t.className = 'toast-item' + (err?' err':'');
+  t.innerHTML = `<span>${msg}</span>`;
+  stack.appendChild(t);
+  setTimeout(()=>{ t.style.opacity='0'; t.style.transform='translateY(8px)'; t.style.transition='.25s'; setTimeout(()=>t.remove(),250); },3000);
+}
+
+window.addEventListener('load', () => {
+  ME = DB.currentUser();
+  if (ME) {
+    document.getElementById('authOverlay').classList.remove('show');
+    updateSidebarUser();
+    renderAll();
+  } else {
+    document.getElementById('authOverlay').classList.add('show');
+    setTimeout(() => {
+      if (document.getElementById('authOverlay').classList.contains('show')) {
+        DB.signIn('rahul@college.edu', 'password123').then(() => {
+          ME = DB.currentUser();
+          document.getElementById('authOverlay').classList.remove('show');
+          updateSidebarUser();
+          renderAll();
+        }).catch(() => {});
+      }
+    }, 1500);
+  }
+});
+</script>
+</body>
+</html>
